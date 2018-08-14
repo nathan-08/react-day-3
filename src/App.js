@@ -154,3 +154,11 @@ class App extends Component {
 }
 
 export default App;
+// Day 3
+//     HTTP and axios
+//     Lifecycle methods and rest
+//     1. list of products from the server, also add a new product to the server. GET, POST
+//     Look into swagger.io for the api key
+//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience 
+//     3. Button component, all buttons on the screen with the exact same component.
+//     4. Server side search using query parameters. Seperate API for payments.fileName
