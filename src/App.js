@@ -49,7 +49,6 @@ class App extends Component {
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
     this.toggleCardView = this.toggleCardView.bind(this);
   }
-
   componentDidMount(){
     axios.get('/insertApiHereForGettingProducts').then( response => {
       this.setState({
@@ -58,7 +57,7 @@ class App extends Component {
     })
   }
   addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer').then( response => {
+    axios.post('/insertApiForAddingProductToServer', product).then( response => {
       this.setState({
         //should receive updated array with new list of products, update on state
       })
@@ -66,24 +65,41 @@ class App extends Component {
   }
 
   handleAddItemToCart( item ){
-    let newCart = this.state.cart.map( cartItem => {
-      return {
-        id:cartItem.id,
-        name:cartItem.name,
-        description:cartItem.description,
-        price:cartItem.price,
-        imageUrl:cartItem.imageUrl
-      }
+    // let newCart = this.state.cart.map( cartItem => {
+    //   return {
+    //     id:cartItem.id,
+    //     name:cartItem.name,
+    //     description:cartItem.description,
+    //     price:cartItem.price,
+    //     imageUrl:cartItem.imageUrl
+    //   }
+    // })
+    // newCart.push(item)
+    // this.setState({
+    //   cart:newCart
+    // })
+    axios.post('/apiToAddItemToCart', item).then( response => {
+      this.setState({
+        //set the cart with the response from the server, which should be an updated cart
+      })
     })
-    newCart.push(item)
-    this.setState({
-      cart:newCart
+  }
+  handleRemoveItemFromCart( id ){
+    axios.delete(`/apiToRemoveItemFromCart/${id}`).then( response => {
+      this.setState({
+        //set the cart with the response from the server, which should be an updated cart
+      })
     })
   }
   checkout(){
     alert("Here's yer stuff")
-    this.setState({
-      cart:[]
+    // this.setState({
+    //   cart:[]
+    // })
+    axios.delete(`/apiToCheckoutCart`).then( response => {
+      this.setState({
+        cart:[] //or set it to response from server, which I assumed would be an empty array representing the cart
+      })
     })
   }
   toggleCardView(){
