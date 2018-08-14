@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Product from './Components/Product';
 import CartItem from './Components/CartItem';
+import AddProduct from './Components/AddProduct';
 import axios from 'axios';
 
 class App extends Component {
@@ -48,6 +49,7 @@ class App extends Component {
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
     this.toggleCardView = this.toggleCardView.bind(this);
+    this.addProduct = this.addProduct.bind(this);
   }
   componentDidMount(){
     axios.get('/insertApiHereForGettingProducts').then( response => {
@@ -92,7 +94,9 @@ class App extends Component {
   render() {
     return (
       <div>
-        
+        <AddProduct
+          addItem={this.handleAddItemToCart}
+        />
         <div className='products'>
           <h1>PRODUCTS</h1>
           <button onClick={this.toggleCardView}>Toggle View</button>
@@ -102,7 +106,7 @@ class App extends Component {
               return(
                 <Product
                   item={item}
-                  addItem={this.handleAddItemToCart}
+                  addProduct={this.addProduct}
                   cardView={this.state.toggleCard}
                 />
               )
