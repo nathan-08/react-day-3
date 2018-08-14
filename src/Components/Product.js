@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import "./../App.css";
 import Text from "./Text";
+import Button from './Button';
 
 class Product extends Component {
   render() {
@@ -17,7 +18,9 @@ class Product extends Component {
             text={'$' + item.price}
             isHeader={false}
         />
-        <button onClick={() => this.props.addItem(item)}>Add to Cart</button>
+        {/* <button onClick={() => this.props.addItem(item)}>Add to Cart</button> */}
+        <Button handleClick={() => this.props.addItem(item)} text='Add to Cart'/>
+        
       </div>
     ) : (
       <div>
@@ -34,7 +37,8 @@ class Product extends Component {
             text={'$' + item.price}
             isHeader={false}
         />
-        <button onClick={() => this.props.addItem(item)}>Add to Cart</button>
+        {/* <button onClick={() => this.props.addItem(item)}>Add to Cart</button> */}
+        <Button handleClick={() => this.props.addItem(item)} text='Add to Cart'/>
       </div>
     );
   }

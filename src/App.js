@@ -4,6 +4,7 @@ import Product from './Components/Product';
 import CartItem from './Components/CartItem';
 import AddProduct from './Components/AddProduct';
 import axios from 'axios';
+import Button from './Components/Button';
 
 class App extends Component {
   constructor(props) {
@@ -131,7 +132,8 @@ class App extends Component {
         />
         <div className='products'>
           <h1>PRODUCTS</h1>
-          <button onClick={this.toggleCardView}>Toggle View</button>
+          {/* <button onClick={this.toggleCardView}>Toggle View</button> */}
+          <Button handleClick={this.toggleCardView} text='Toggle View'/>
           <h2>Beach Gear</h2>
           {
             this.state.beachGear.map( item => {
@@ -177,7 +179,8 @@ class App extends Component {
             <p>${
               this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price,0)
             }</p>
-            <button onClick={this.checkout}>Checkout</button>
+            {/* <button onClick={this.checkout}>Checkout</button> */}
+            <Button handleClick={this.checkout} text='Checkout'/>
           </div>
         </div>
       </div>
