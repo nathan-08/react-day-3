@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Product from './Components/Product';
 import CartItem from './Components/CartItem';
+import axios from 'axios';
 
 class App extends Component {
   constructor(props) {
@@ -47,6 +48,20 @@ class App extends Component {
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
     this.toggleCardView = this.toggleCardView.bind(this);
+  }
+  componentDidMount(){
+    axios.get('/insertApiHereForGettingProducts').then( response => {
+      this.setState({
+        //set state with the products from the server
+      })
+    })
+  }
+  addProduct( product ){
+    axios.post('/insertApiForAddingProductToServer').then( response => {
+      this.setState({
+        //should receive updated array with new list of products, update on state
+      })
+    })
   }
   handleAddItemToCart( item ){
     let newCart = this.state.cart.map( cartItem => {
