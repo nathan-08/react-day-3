@@ -70,9 +70,6 @@ class App extends Component {
           candy:response.data.filter( product => product.category === 'candy')
         })
       })
-      // this.setState({
-      //   //set state with the products from the server
-      // })
     })
   }
   addProduct( product ){
