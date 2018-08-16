@@ -44,7 +44,12 @@ class App extends Component {
         ],
       
       cart:[],
-      toggleCard:false
+      candy:[],
+      clothing:[],
+      shoes:[],
+      cart:[],
+      toggleCard:false,
+      apiKey:''
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
