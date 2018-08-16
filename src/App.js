@@ -51,8 +51,10 @@ class App extends Component {
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
+    this.handleRemoveItemFromCart = this.handleRemoveItemFromCart.bind(this);
     this.toggleCardView = this.toggleCardView.bind(this);
     this.addProduct = this.addProduct.bind(this);
+    this.changeQuantity = this.changeQuantity.bind(this);
   }
   componentDidMount(){
     axios.get('/api/key').then( response => {
@@ -95,16 +97,25 @@ class App extends Component {
     // this.setState({
     //   cart:newCart
     // })
-    axios.post('/apiToAddItemToCart', item).then( response => {
+    axios.post(`/api/cart/${item.id}?key=${this.state.apiKey}`).then( response => {
+      console.log('add item to cart response: ', response.data)
       this.setState({
-        //set the cart with the response from the server, which should be an updated cart
+        cart:response.data
       })
     })
   }
   handleRemoveItemFromCart( id ){
-    axios.delete(`/apiToRemoveItemFromCart/${id}`).then( response => {
+    axios.delete(`/api/cart/${id}?key=${this.state.apiKey}`).then( response => {
       this.setState({
-        //set the cart with the response from the server, which should be an updated cart
+        cart:response.data
+      })
+    })
+  }
+  changeQuantity( item, change){
+    axios.put(`/api/cart?key=${this.state.apiKey}`, {id:item.id, quantity:item.quantity+change}).then( response => {
+      console.log('change quantity response: ', response)
+      this.setState({
+        cart:response.data
       })
     })
   }
@@ -113,7 +124,7 @@ class App extends Component {
     // this.setState({
     //   cart:[]
     // })
-    axios.delete(`/apiToCheckoutCart`).then( response => {
+    axios.delete(`/api/cart/checkout?key=${this.state.apiKey}`).then( response => {
       this.setState({
         cart:[] //or set it to response from server, which I assumed would be an empty array representing the cart
       })
@@ -124,6 +135,7 @@ class App extends Component {
       toggleCard:!this.state.toggleCard
     })
   }
+  
   render() {
     return (
       <div>
@@ -210,6 +222,8 @@ class App extends Component {
                   <CartItem
                     item={item}
                     key={item.id}
+                    removeItem={this.handleRemoveItemFromCart}
+                    changeQuantity={this.changeQuantity}
                   />
                 )
               })
@@ -219,7 +233,7 @@ class App extends Component {
           <div className='total'>
             <h1>TOTAL</h1>
             <p>${
-              this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price,0)
+              this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price*current.quantity,0)
             }</p>
             <button onClick={this.checkout}>Checkout</button>
           </div>
