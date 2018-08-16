@@ -7,7 +7,8 @@ class AddProduct extends Component {
             nameInput:'',
             descriptionInput:'',
             priceInput:'',
-            imageInput:''
+            imageInput:'',
+            category:''
         }
     }
     handleName( name ){
@@ -30,9 +31,14 @@ class AddProduct extends Component {
             imageInput:image
         })
     }
+    handleCategory( category ){
+        this.setState({
+            categoryInput:category
+        })
+    }
     
     render() {
-        const { nameInput, descriptionInput, priceInput, imageInput } = this.state;
+        const { nameInput, descriptionInput, priceInput, imageInput, categoryInput } = this.state;
         return (
             <div>
                 <p>Name: </p>
@@ -43,7 +49,13 @@ class AddProduct extends Component {
                 <input onChange={e => this.handlePrice(e.target.value)} value={priceInput}/>
                 <p>Image: </p>
                 <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
-                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput})}>Submit</button>
+                <select onChange={e => this.handleCategory(e.target.value)} value={categoryInput}>
+                    <option value="camping">Camping</option>
+                    <option value="candy">Candy</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="shoes">Shoes</option>
+                </select>
+                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput, category:categoryInput})}>Submit</button>
             </div>
         );
     }
