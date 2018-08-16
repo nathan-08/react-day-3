@@ -72,10 +72,11 @@ class App extends Component {
     })
   }
   addProduct( product ){
+    console.log('product to add:', product)
     axios.post(`/api/products?key=${this.state.apiKey}`, product).then( response => {
       console.log(response)
       this.setState({
-
+        [product.category]:response.data.filter( serverProduct => serverProduct.category === product.category)
       })
     })
   }
