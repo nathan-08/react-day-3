@@ -5,6 +5,7 @@ import CartItem from './Components/CartItem';
 import AddProduct from './Components/AddProduct';
 import axios from 'axios';
 import Button from './Components/Button';
+import Search from './Components/Search';
 
 class App extends Component {
   constructor(props) {
@@ -48,7 +49,9 @@ class App extends Component {
       shoes:[],
       cart:[],
       toggleCard:false,
-      apiKey:''
+      apiKey:'',
+      searchCategory:'camping',
+      searchString:''
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
@@ -56,6 +59,9 @@ class App extends Component {
     this.toggleCardView = this.toggleCardView.bind(this);
     this.addProduct = this.addProduct.bind(this);
     this.changeQuantity = this.changeQuantity.bind(this);
+    this.handleSearchCategory = this.handleSearchCategory.bind(this);
+    this.handleSearchString = this.handleSearchString.bind(this);
+    this.search = this.search.bind(this);
   }
   componentDidMount(){
     axios.get('/api/key').then( response => {
@@ -136,10 +142,30 @@ class App extends Component {
       toggleCard:!this.state.toggleCard
     })
   }
+  handleSearchString( searchString ){
+    this.setState({
+      searchString
+    })
+  }
+  handleSearchCategory( searchCategory ){
+    this.setState({
+      searchCategory
+    })
+  }
+  search(){
+
+  }
   
   render() {
     return (
       <div>
+        <Search
+          handleSearchCategory={this.handleSearchCategory}
+          handleSearchString={this.handleSearchString}
+          searchCategory={this.state.searchCategory}
+          searchString={this.state.searchString}
+          searchFn={this.search}
+        />
         <AddProduct
           addItem={this.handleAddItemToCart}
           addProduct={this.addProduct}
