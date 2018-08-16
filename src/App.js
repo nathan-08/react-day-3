@@ -42,8 +42,6 @@ class App extends Component {
           },
 
         ],
-      
-      cart:[],
       candy:[],
       clothing:[],
       shoes:[],
@@ -115,7 +113,7 @@ class App extends Component {
         <div className='products'>
           <h1>PRODUCTS</h1>
           <button onClick={this.toggleCardView}>Toggle View</button>
-          <h2>Beach Gear</h2>
+          {/* <h2>Beach Gear</h2>
           {
             this.state.beachGear.map( item => {
               return(
@@ -123,10 +121,11 @@ class App extends Component {
                   item={item}
                   addProduct={this.addProduct}
                   cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
-          }
+          } */}
           <h2>Camping</h2>
           {
             this.state.camping.map( item => {
@@ -135,6 +134,46 @@ class App extends Component {
                   item={item}
                   addItem={this.handleAddItemToCart}
                   cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Clothing</h2>
+          {
+            this.state.clothing.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Shoes</h2>
+          {
+            this.state.shoes.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Candy</h2>
+          {
+            this.state.candy.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
@@ -149,6 +188,7 @@ class App extends Component {
                 return( 
                   <CartItem
                     item={item}
+                    key={item.id}
                   />
                 )
               })
