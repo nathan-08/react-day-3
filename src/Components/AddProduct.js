@@ -8,7 +8,7 @@ class AddProduct extends Component {
             descriptionInput:'',
             priceInput:'',
             imageInput:'',
-            category:''
+            categoryInput:'camping'
         }
     }
     handleName( name ){
@@ -51,7 +51,7 @@ class AddProduct extends Component {
                 <p>Image: </p>
                 <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
                 <p>Category: </p>
-                <select onChange={e => this.handleCategory(e.target.value)} value={categoryInput}>
+                <select onChange={e => this.handleCategory(e.target.value)} value={categoryInput} >
                     <option value="camping">Camping</option>
                     <option value="candy">Candy</option>
                     <option value="clothing">Clothing</option>
