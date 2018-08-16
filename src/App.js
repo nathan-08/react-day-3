@@ -156,7 +156,7 @@ class App extends Component {
     const { searchCategory, searchString, apiKey } = this.state;
     let queryString = searchCategory ? `&category=${searchCategory}` : '';
     queryString = searchString ? queryString + `&name=${searchString}` : queryString;
-    axios.get(`/api/search?key=${apiKey}${queryString}`).then( response => {
+    axios.get(`/api/products?key=${apiKey}${queryString}`).then( response => {
       console.log('search response: ', response)
       this.setState({
         camping:response.data.filter( product => product.category === 'camping'),
