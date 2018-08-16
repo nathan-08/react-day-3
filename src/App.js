@@ -15,14 +15,14 @@ class App extends Component {
           name:'Flip Flops',
           description:'Some flippy floppys',
           price:5.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
         {
           id:2,
           name:'Tent',
           description:'TENTS',
           price:6.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
       ],
         camping:[
@@ -31,14 +31,14 @@ class App extends Component {
             name:'Sun tan lotion',
             description:'Gotta look fly guy',
             price:7.99,
-            imageUrl:'http://via.placeholder.com/350x150'
+            image:'http://via.placeholder.com/350x150'
           },
           {
             id:4,
             name:'Mice',
             description:'Not blind',
             price:8.99,
-            imageUrl:'http://via.placeholder.com/350x150'
+            image:'http://via.placeholder.com/350x150'
           },
 
         ],
@@ -72,9 +72,10 @@ class App extends Component {
     })
   }
   addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer').then( response => {
+    axios.post(`/api/products?key=${this.state.apiKey}`, product).then( response => {
+      console.log(response)
       this.setState({
-        //should receive updated array with new list of products, update on state
+
       })
     })
   }
@@ -85,7 +86,7 @@ class App extends Component {
         name:cartItem.name,
         description:cartItem.description,
         price:cartItem.price,
-        imageUrl:cartItem.imageUrl
+        image:cartItem.image
       }
     })
     newCart.push(item)
@@ -109,6 +110,7 @@ class App extends Component {
       <div>
         <AddProduct
           addItem={this.handleAddItemToCart}
+          addProduct={this.addProduct}
         />
         <div className='products'>
           <h1>PRODUCTS</h1>
