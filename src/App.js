@@ -124,9 +124,9 @@ class App extends Component {
     // this.setState({
     //   cart:[]
     // })
-    axios.delete(`/api/cart/checkout?key=${this.state.apiKey}`).then( response => {
+    axios.delete(`/api/checkout?key=${this.state.apiKey}`).then( response => {
       this.setState({
-        cart:[] //or set it to response from server, which I assumed would be an empty array representing the cart
+        cart:response.data //or set it to response from server, which I assumed would be an empty array representing the cart
       })
     })
   }
