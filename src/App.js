@@ -155,6 +155,7 @@ class App extends Component {
                   item={item}
                   addProduct={this.addProduct}
                   cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
@@ -248,6 +249,6 @@ export default App;
 //     Lifecycle methods and rest
 //     1. list of products from the server, also add a new product to the server. GET, POST
 //     Look into swagger.io for the api key
-//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience 
+//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now
 //     3. Button component, all buttons on the screen with the exact same component.
 //     4. Server side search using query parameters. Seperate API for payments.fileName
