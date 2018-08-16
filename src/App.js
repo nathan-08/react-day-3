@@ -52,9 +52,19 @@ class App extends Component {
     this.addProduct = this.addProduct.bind(this);
   }
   componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
+    axios.get('/api/key').then( response => {
+      console.log('key response:', response)
       this.setState({
-        //set state with the products from the server
+        apiKey:response.data.apiKey
+      })
+      axios.get(`/api/products?key=${this.state.apiKey}`).then( response => {
+        console.log('products response: ', response)
+        this.setState({
+          camping:response.data.filter( product => product.category === 'camping'),
+          clothing:response.data.filter( product => product.category === 'clothing'),
+          shoes:response.data.filter( product => product.category === 'shoes'),
+          candy:response.data.filter( product => product.category === 'candy')
+        })
       })
     })
   }
