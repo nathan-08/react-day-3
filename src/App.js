@@ -26,26 +26,29 @@ class App extends Component {
           imageUrl:'http://via.placeholder.com/350x150'
         },
       ],
-        camping:[
-          {
-            id:3,
-            name:'Sun tan lotion',
-            description:'Gotta look fly guy',
-            price:7.99,
-            imageUrl:'http://via.placeholder.com/350x150'
-          },
-          {
-            id:4,
-            name:'Mice',
-            description:'Not blind',
-            price:8.99,
-            imageUrl:'http://via.placeholder.com/350x150'
-          },
+      camping:[
+        {
+          id:3,
+          name:'Sun tan lotion',
+          description:'Gotta look fly guy',
+          price:7.99,
+          imageUrl:'http://via.placeholder.com/350x150'
+        },
+        {
+          id:4,
+          name:'Mice',
+          description:'Not blind',
+          price:8.99,
+          imageUrl:'http://via.placeholder.com/350x150'
+        },
 
-        ],
-      
+      ],
+      candy:[],
+      clothing:[],
+      shoes:[],
       cart:[],
-      toggleCard:false
+      toggleCard:false,
+      apiKey:''
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
@@ -53,10 +56,23 @@ class App extends Component {
     this.addProduct = this.addProduct.bind(this);
   }
   componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
+    axios.get('/api/key').then( response => {
+      console.log('key response:', response)
       this.setState({
-        //set state with the products from the server
+        apiKey:response.data.apiKey
       })
+      axios.get(`/api/products?key=${this.state.apiKey}`).then( response => {
+        console.log('products response: ', response)
+        this.setState({
+          camping:response.data.filter( product => product.category === 'camping'),
+          clothing:response.data.filter( product => product.category === 'clothing'),
+          shoes:response.data.filter( product => product.category === 'shoes'),
+          candy:response.data.filter( product => product.category === 'candy')
+        })
+      })
+      // this.setState({
+      //   //set state with the products from the server
+      // })
     })
   }
   addProduct( product ){
@@ -66,13 +82,13 @@ class App extends Component {
       })
     })
   }
-  componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
-      this.setState({
-        //set state with the products from the server
-      })
-    })
-  }
+  // componentDidMount(){
+  //   axios.get('/insertApiHereForGettingProducts').then( response => {
+  //     this.setState({
+  //       //set state with the products from the server
+  //     })
+  //   })
+  // }
   addProduct( product ){
     axios.post('/insertApiForAddingProductToServer', product).then( response => {
       this.setState({
@@ -134,7 +150,7 @@ class App extends Component {
           <h1>PRODUCTS</h1>
           {/* <button onClick={this.toggleCardView}>Toggle View</button> */}
           <Button handleClick={this.toggleCardView} text='Toggle View'/>
-          <h2>Beach Gear</h2>
+          {/* <h2>Beach Gear</h2>
           {
             this.state.beachGear.map( item => {
               return(
@@ -145,7 +161,7 @@ class App extends Component {
                 />
               )
             })
-          }
+          } */}
           <h2>Camping</h2>
           {
             this.state.camping.map( item => {
@@ -154,6 +170,46 @@ class App extends Component {
                   item={item}
                   addItem={this.handleAddItemToCart}
                   cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Clothing</h2>
+          {
+            this.state.clothing.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Shoes</h2>
+          {
+            this.state.shoes.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Candy</h2>
+          {
+            this.state.candy.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
@@ -168,6 +224,7 @@ class App extends Component {
                 return( 
                   <CartItem
                     item={item}
+                    key={item.id}
                   />
                 )
               })
