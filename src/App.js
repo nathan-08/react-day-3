@@ -80,20 +80,6 @@ class App extends Component {
       })
     })
   }
-  componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
-      this.setState({
-        //set state with the products from the server
-      })
-    })
-  }
-  addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer', product).then( response => {
-      this.setState({
-        //should receive updated array with new list of products, update on state
-      })
-    })
-  }
 
   handleAddItemToCart( item ){
     // let newCart = this.state.cart.map( cartItem => {
@@ -249,6 +235,6 @@ export default App;
 //     Lifecycle methods and rest
 //     1. list of products from the server, also add a new product to the server. GET, POST
 //     Look into swagger.io for the api key
-//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now
+//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now on the server.
 //     3. Button component, all buttons on the screen with the exact same component.
 //     4. Server side search using query parameters. Seperate API for payments.fileName
