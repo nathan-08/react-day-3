@@ -15,14 +15,14 @@ class App extends Component {
           name:'Flip Flops',
           description:'Some flippy floppys',
           price:5.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
         {
           id:2,
           name:'Tent',
           description:'TENTS',
           price:6.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
       ],
         camping:[
@@ -31,20 +31,23 @@ class App extends Component {
             name:'Sun tan lotion',
             description:'Gotta look fly guy',
             price:7.99,
-            imageUrl:'http://via.placeholder.com/350x150'
+            image:'http://via.placeholder.com/350x150'
           },
           {
             id:4,
             name:'Mice',
             description:'Not blind',
             price:8.99,
-            imageUrl:'http://via.placeholder.com/350x150'
+            image:'http://via.placeholder.com/350x150'
           },
 
         ],
-      
+      candy:[],
+      clothing:[],
+      shoes:[],
       cart:[],
-      toggleCard:false
+      toggleCard:false,
+      apiKey:''
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
@@ -52,16 +55,28 @@ class App extends Component {
     this.addProduct = this.addProduct.bind(this);
   }
   componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
+    axios.get('/api/key').then( response => {
+      console.log('key response:', response)
       this.setState({
-        //set state with the products from the server
+        apiKey:response.data.apiKey
+      })
+      axios.get(`/api/products?key=${this.state.apiKey}`).then( response => {
+        console.log('products response: ', response)
+        this.setState({
+          camping:response.data.filter( product => product.category === 'camping'),
+          clothing:response.data.filter( product => product.category === 'clothing'),
+          shoes:response.data.filter( product => product.category === 'shoes'),
+          candy:response.data.filter( product => product.category === 'candy')
+        })
       })
     })
   }
   addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer').then( response => {
+    console.log('product to add:', product)
+    axios.post(`/api/products?key=${this.state.apiKey}`, product).then( response => {
+      console.log(response)
       this.setState({
-        //should receive updated array with new list of products, update on state
+        [product.category]:response.data.filter( serverProduct => serverProduct.category === product.category)
       })
     })
   }
@@ -128,11 +143,12 @@ class App extends Component {
       <div>
         <AddProduct
           addItem={this.handleAddItemToCart}
+          addProduct={this.addProduct}
         />
         <div className='products'>
           <h1>PRODUCTS</h1>
           <button onClick={this.toggleCardView}>Toggle View</button>
-          <h2>Beach Gear</h2>
+          {/* <h2>Beach Gear</h2>
           {
             this.state.beachGear.map( item => {
               return(
@@ -140,10 +156,11 @@ class App extends Component {
                   item={item}
                   addProduct={this.addProduct}
                   cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
-          }
+          } */}
           <h2>Camping</h2>
           {
             this.state.camping.map( item => {
@@ -152,6 +169,46 @@ class App extends Component {
                   item={item}
                   addItem={this.handleAddItemToCart}
                   cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Clothing</h2>
+          {
+            this.state.clothing.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Shoes</h2>
+          {
+            this.state.shoes.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
+                />
+              )
+            })
+          }
+          <h2>Candy</h2>
+          {
+            this.state.candy.map( item => {
+              return(
+                <Product
+                  item={item}
+                  addItem={this.handleAddItemToCart}
+                  cardView={this.state.toggleCard}
+                  key={item.id}
                 />
               )
             })
@@ -166,6 +223,7 @@ class App extends Component {
                 return( 
                   <CartItem
                     item={item}
+                    key={item.id}
                   />
                 )
               })
@@ -191,6 +249,6 @@ export default App;
 //     Lifecycle methods and rest
 //     1. list of products from the server, also add a new product to the server. GET, POST
 //     Look into swagger.io for the api key
-//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience 
+//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now
 //     3. Button component, all buttons on the screen with the exact same component.
 //     4. Server side search using query parameters. Seperate API for payments.fileName
