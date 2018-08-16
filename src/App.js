@@ -50,7 +50,7 @@ class App extends Component {
       cart:[],
       toggleCard:false,
       apiKey:'',
-      searchCategory:'camping',
+      searchCategory:'',
       searchString:''
     }
     this.checkout = this.checkout.bind(this);
@@ -153,7 +153,18 @@ class App extends Component {
     })
   }
   search(){
-
+    const { searchCategory, searchString, apiKey } = this.state;
+    let queryString = searchCategory ? `&category=${searchCategory}` : '';
+    queryString = searchString ? queryString + `&name=${searchString}` : queryString;
+    axios.get(`/api/search?key=${apiKey}${queryString}`).then( response => {
+      console.log('search response: ', response)
+      this.setState({
+        camping:response.data.filter( product => product.category === 'camping'),
+        clothing:response.data.filter( product => product.category === 'clothing'),
+        shoes:response.data.filter( product => product.category === 'shoes'),
+        candy:response.data.filter( product => product.category === 'candy')
+      })
+    })
   }
   
   render() {
