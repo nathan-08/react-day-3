@@ -16,31 +16,31 @@ class App extends Component {
           name:'Flip Flops',
           description:'Some flippy floppys',
           price:5.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
         {
           id:2,
           name:'Tent',
           description:'TENTS',
           price:6.99,
-          imageUrl:'http://via.placeholder.com/350x150'
+          image:'http://via.placeholder.com/350x150'
         },
       ],
-      camping:[
-        {
-          id:3,
-          name:'Sun tan lotion',
-          description:'Gotta look fly guy',
-          price:7.99,
-          imageUrl:'http://via.placeholder.com/350x150'
-        },
-        {
-          id:4,
-          name:'Mice',
-          description:'Not blind',
-          price:8.99,
-          imageUrl:'http://via.placeholder.com/350x150'
-        },
+        camping:[
+          {
+            id:3,
+            name:'Sun tan lotion',
+            description:'Gotta look fly guy',
+            price:7.99,
+            image:'http://via.placeholder.com/350x150'
+          },
+          {
+            id:4,
+            name:'Mice',
+            description:'Not blind',
+            price:8.99,
+            image:'http://via.placeholder.com/350x150'
+          },
 
       ],
       candy:[],
@@ -52,8 +52,10 @@ class App extends Component {
     }
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
+    this.handleRemoveItemFromCart = this.handleRemoveItemFromCart.bind(this);
     this.toggleCardView = this.toggleCardView.bind(this);
     this.addProduct = this.addProduct.bind(this);
+    this.changeQuantity = this.changeQuantity.bind(this);
   }
   componentDidMount(){
     axios.get('/api/key').then( response => {
@@ -73,23 +75,11 @@ class App extends Component {
     })
   }
   addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer').then( response => {
+    console.log('product to add:', product)
+    axios.post(`/api/products?key=${this.state.apiKey}`, product).then( response => {
+      console.log(response)
       this.setState({
-        //should receive updated array with new list of products, update on state
-      })
-    })
-  }
-  // componentDidMount(){
-  //   axios.get('/insertApiHereForGettingProducts').then( response => {
-  //     this.setState({
-  //       //set state with the products from the server
-  //     })
-  //   })
-  // }
-  addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer', product).then( response => {
-      this.setState({
-        //should receive updated array with new list of products, update on state
+        [product.category]:response.data.filter( serverProduct => serverProduct.category === product.category)
       })
     })
   }
@@ -108,16 +98,25 @@ class App extends Component {
     // this.setState({
     //   cart:newCart
     // })
-    axios.post('/apiToAddItemToCart', item).then( response => {
+    axios.post(`/api/cart/${item.id}?key=${this.state.apiKey}`).then( response => {
+      console.log('add item to cart response: ', response.data)
       this.setState({
-        //set the cart with the response from the server, which should be an updated cart
+        cart:response.data
       })
     })
   }
   handleRemoveItemFromCart( id ){
-    axios.delete(`/apiToRemoveItemFromCart/${id}`).then( response => {
+    axios.delete(`/api/cart/${id}?key=${this.state.apiKey}`).then( response => {
       this.setState({
-        //set the cart with the response from the server, which should be an updated cart
+        cart:response.data
+      })
+    })
+  }
+  changeQuantity( item, change){
+    axios.put(`/api/cart?key=${this.state.apiKey}`, {id:item.id, quantity:item.quantity+change}).then( response => {
+      console.log('change quantity response: ', response)
+      this.setState({
+        cart:response.data
       })
     })
   }
@@ -126,9 +125,9 @@ class App extends Component {
     // this.setState({
     //   cart:[]
     // })
-    axios.delete(`/apiToCheckoutCart`).then( response => {
+    axios.delete(`/api/checkout?key=${this.state.apiKey}`).then( response => {
       this.setState({
-        cart:[] //or set it to response from server, which I assumed would be an empty array representing the cart
+        cart:response.data //or set it to response from server, which I assumed would be an empty array representing the cart
       })
     })
   }
@@ -137,11 +136,13 @@ class App extends Component {
       toggleCard:!this.state.toggleCard
     })
   }
+  
   render() {
     return (
       <div>
         <AddProduct
           addItem={this.handleAddItemToCart}
+          addProduct={this.addProduct}
         />
         <div className='products'>
           <h1>PRODUCTS</h1>
@@ -223,6 +224,8 @@ class App extends Component {
                   <CartItem
                     item={item}
                     key={item.id}
+                    removeItem={this.handleRemoveItemFromCart}
+                    changeQuantity={this.changeQuantity}
                   />
                 )
               })
@@ -232,7 +235,7 @@ class App extends Component {
           <div className='total'>
             <h1>TOTAL</h1>
             <p>${
-              this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price,0)
+              this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price*current.quantity,0)
             }</p>
             {/* <button onClick={this.checkout}>Checkout</button> */}
             <Button handleClick={this.checkout} text='Checkout'/>
@@ -249,6 +252,6 @@ export default App;
 //     Lifecycle methods and rest
 //     1. list of products from the server, also add a new product to the server. GET, POST
 //     Look into swagger.io for the api key
-//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now
+//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now on the server.
 //     3. Button component, all buttons on the screen with the exact same component.
 //     4. Server side search using query parameters. Seperate API for payments.fileName

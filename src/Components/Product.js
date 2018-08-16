@@ -24,7 +24,7 @@ class Product extends Component {
       </div>
     ) : (
       <div>
-        <img src={item.imageUrl} alt="the item" />
+        <img src={item.image} alt="the item" />
         <Text
             text={item.name}
             isHeader={true}
