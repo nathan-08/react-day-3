@@ -649,6 +649,8 @@ Today we will be focusing on making HTTP requests using the axios package.
 
 ## Step 1
 
+In Step 1 we will use axios to get a list of products from the server. We will be able to add products to the server. 
+
 ### Summary
 
 ### Instructions
