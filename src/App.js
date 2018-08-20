@@ -59,20 +59,6 @@ class App extends Component {
     })
   }
   addProduct( product ){
-    axios.post('/insertApiForAddingProductToServer').then( response => {
-      this.setState({
-        //should receive updated array with new list of products, update on state
-      })
-    })
-  }
-  componentDidMount(){
-    axios.get('/insertApiHereForGettingProducts').then( response => {
-      this.setState({
-        //set state with the products from the server
-      })
-    })
-  }
-  addProduct( product ){
     axios.post('/insertApiForAddingProductToServer', product).then( response => {
       this.setState({
         //should receive updated array with new list of products, update on state
@@ -138,7 +124,7 @@ class App extends Component {
               return(
                 <Product
                   item={item}
-                  addProduct={this.addProduct}
+                  addProduct={this.handleAddItemToCart}
                   cardView={this.state.toggleCard}
                 />
               )
