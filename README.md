@@ -649,13 +649,109 @@ Today we will be focusing on making HTTP requests using the axios package.
 
 ## Step 1
 
-In Step 1 we will use axios to get a list of products from the server. We will be able to add products to the server. 
+
 
 ### Summary
 
+In Step 1 we will use axios to get a list of products from the server. We will be able to add products to the server. In order to access the server, we will get an API key. This needs to be applied to all http requests as a query called "key".
+
 ### Instructions
 
+* Refer to API docs to get an API key. Store this key on state. This will be used as a query parameter in all other requests.
+* Once we have an API key, we need to get all products from the API. (both of these steps can happen in componentDidMount)
+* We will create a form where users can create a new product and submit it to the server. This should take in a name, desscriptions, price, and image url. 
+
 <details><summary> Detailed Instructions </summary>
+
+We need to get an API key, and then get a the list of products. Then store these on state.
+
+```js
+componentDidMount() {
+  axios.get('get_api_key_url')
+       .then( apiKeyResponse => {
+         // api key is on response.data.apiKey
+        axios.get('get_all_products?key='+apiKeyResponse.data.apiKey)
+             .then( productsResponse => {
+               this.setState({
+                 apiKey: apiKeyResponse.data.apiKey,
+                 products: productsResponse.data
+               })
+             })
+       })
+}
+```
+We can create an AddProduct component, which will be a container of inputs, and take in a function as a parameter to be able to submit the data to the server.
+
+
+in App.js
+```js
+addProduct( producct ) {
+  axios.post('api_add_product?key='+this.state.apiKey)
+       .then( response => this.setState({ products: response.data }))
+}
+// ...
+render(){
+  return (
+    <AddProduct addItem={this.addProduct}/>
+    // ...
+```
+in AddProduct.js
+```js
+import React, { Component } from 'react';
+
+class AddProduct extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            nameInput:'',
+            descriptionInput:'',
+            priceInput:'',
+            imageInput:''
+        }
+    }
+    handleName( name ){
+        this.setState({
+            nameInput:name
+        })
+    }
+    handleDescription( description ){
+        this.setState({
+            descriptionInput:description
+        })
+    }
+    handlePrice( price ){
+        this.setState({
+            priceInput:price
+        })
+    }
+    handleImage( image ){
+        this.setState({
+            imageInput:image
+        })
+    }
+    
+    render() {
+        const { nameInput, descriptionInput, priceInput, imageInput } = this.state;
+        return (
+            <div>
+                <p>Name: </p>
+                <input onChange={e => this.handleName(e.target.value)} value={nameInput}/>
+                <p>Description: </p>
+                <input onChange={e => this.handleDescription(e.target.value)} value={descriptionInput}/>
+                <p>Price: </p>
+                <input onChange={e => this.handlePrice(e.target.value)} value={priceInput}/>
+                <p>Image: </p>
+                <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
+                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput})}>Submit</button>
+            </div>
+        );
+    }
+}
+
+export default AddProduct;
+```
+
+
 </details>
 
 ## Step 2

@@ -95,7 +95,7 @@ class App extends Component {
     return (
       <div>
         <AddProduct
-          addItem={this.handleAddItemToCart}
+          addItem={this.addProduct}
         />
         <div className='products'>
           <h1>PRODUCTS</h1>
@@ -103,10 +103,11 @@ class App extends Component {
           <h2>Beach Gear</h2>
           {
             this.state.beachGear.map( item => {
+              if (item)
               return(
                 <Product
                   item={item}
-                  addProduct={this.addProduct}
+                  addItem={this.addProduct}
                   cardView={this.state.toggleCard}
                 />
               )
