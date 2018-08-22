@@ -771,7 +771,7 @@ Let's refactor our `handleAddItemToCart` method to use axios and send the reques
 
 ```js
 handleAddItemToCart( item ) {
-  axios.post('/api_add_item_to_cart?key='+this.state.apiKey)
+  axios.post(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`)
        .then(response => this.setState({ cart: response.data }))
 }
 ```
@@ -780,7 +780,7 @@ Let's do the same with `removeItemFromCart`.
 
 ```js
 removeItemFromCart( item ) {
-  axios.put('/api_remove_from_cart?key='+this.state.apiKey) {
+  axios.delete(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`) {
        .then(response => this.setState({ cart: response.data }))
   }
 }
