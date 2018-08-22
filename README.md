@@ -686,7 +686,7 @@ We can create an AddProduct component, which will be a container of inputs, and 
 in App.js
 ```js
 addProduct( product ) {
-  axios.post('{{{BASEURL}}}/api/?key='+this.state.apiKey, product)
+  axios.post('{{{BASEURL}}}/api/products?key='+this.state.apiKey, product)
        .then( response => this.setState({ products: response.data }))
 }
 // ...
