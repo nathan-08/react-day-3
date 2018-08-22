@@ -754,7 +754,7 @@ export default AddProduct;
 
 </details>
 
-## Step 2S
+## Step 2
 
 ### Summary
 
