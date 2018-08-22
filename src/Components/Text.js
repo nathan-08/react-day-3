@@ -1,5 +1,5 @@
 import React from "react";
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 function Text(props) {
   const { text, isHeader } = props;
@@ -7,7 +7,7 @@ function Text(props) {
 }
 
 Text.propTypes = {
-    text:PropTypes.string,
-    isHeader:PropTypes.bool
+    text: propTypes.string.isRequired,
+    isHeader: propTypes.bool.isRequired
 }
 export default Text;
