@@ -667,10 +667,10 @@ We need to get an API key, and then get a the list of products. Then store these
 
 ```js
 componentDidMount() {
-  axios.get('get_api_key_url')
+  axios.get('{{{BASEURL}}}/api/key')
        .then( apiKeyResponse => {
          // api key is on response.data.apiKey
-        axios.get('get_all_products?key='+apiKeyResponse.data.apiKey)
+        axios.get('{{{BASEURL}}}/api/products?key='+apiKeyResponse.data.apiKey)
              .then( productsResponse => {
                this.setState({
                  apiKey: apiKeyResponse.data.apiKey,
@@ -685,8 +685,8 @@ We can create an AddProduct component, which will be a container of inputs, and 
 
 in App.js
 ```js
-addProduct( producct ) {
-  axios.post('api_add_product?key='+this.state.apiKey)
+addProduct( product ) {
+  axios.post('{{{BASEURL}}}/api/?key='+this.state.apiKey, product)
        .then( response => this.setState({ products: response.data }))
 }
 // ...
@@ -742,7 +742,7 @@ class AddProduct extends Component {
                 <input onChange={e => this.handlePrice(e.target.value)} value={priceInput}/>
                 <p>Image: </p>
                 <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
-                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput})}>Submit</button>
+                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, image:imageInput})}>Submit</button>
             </div>
         );
     }
@@ -771,7 +771,7 @@ Let's refactor our `handleAddItemToCart` method to use axios and send the reques
 
 ```js
 handleAddItemToCart( item ) {
-  axios.post('/api_add_item_to_cart?key='+this.state.apiKey)
+  axios.post(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`)
        .then(response => this.setState({ cart: response.data }))
 }
 ```
@@ -780,7 +780,7 @@ Let's do the same with `removeItemFromCart`.
 
 ```js
 removeItemFromCart( item ) {
-  axios.put('/api_remove_from_cart?key='+this.state.apiKey) {
+  axios.delete(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`) {
        .then(response => this.setState({ cart: response.data }))
   }
 }
