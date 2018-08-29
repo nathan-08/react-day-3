@@ -828,5 +828,18 @@ In this step we will be refactoring our search function to query the API and ren
 
 ### Instructions
 
+* Add a button under the search input box that will activate the handleSearch method
+* Change the handleSearch method to do a get request to the api for the products with the query parameter of the user search input. 
+* Make sure to have an onChange method for the search input box that will update its value on state.
+* We can change our maps because the filtering will be done by the api.
+
 <details><summary> Detailed Instructions </summary>
+
+```js
+handleSearch = () => {
+    axios.get('/api/cart?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    .then(response=>this.setState({cart: response.data}))
+}
+```
+
 </details>

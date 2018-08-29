@@ -97,7 +97,24 @@ class App extends Component {
   };
   navigate = value => this.setState({ display: value });
   handleSearch = () => {
+    if(!this.state.searchInput) return null;
     axios.get(`/api/cart?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    .then(productsResponse => {
+      console.log('result from search query: ', productsResponse)
+      productsResponse.data.forEach(item => (item.quantity = 0));
+      // filter results onto arrays
+      let camping = productsResponse.data.filter(item => item.category === "camping");
+      let candy = productsResponse.data.filter(item => item.category === "candy");
+      let clothing = productsResponse.data.filter(item => item.category === "clothing");
+      let food = productsResponse.data.filter(item => item.category === "food");
+      this.setState({
+        products: productsResponse.data,
+        camping,
+        candy,
+        clothing,
+        food
+      });
+    });
   }
   handleAddItemToCart(itemID) {
     axios
@@ -209,7 +226,6 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.camping.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
                   return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
               })}
 
@@ -219,7 +235,6 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.candy.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
                   return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
               })}
 
@@ -229,7 +244,6 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.clothing.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
                   return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
               })}
 
@@ -239,7 +253,6 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.food.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
                   return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
               })}
             </table>
