@@ -1,294 +1,318 @@
-import React, { Component } from 'react';
-import './App.css';
-import Product from './Components/Product';
-import CartItem from './Components/CartItem';
-import AddProduct from './Components/AddProduct';
-import axios from 'axios';
+import React, { Component } from "react";
+import axios from "axios";
+import "./App.css";
+import Product from "./Components/Product";
+import CartItem from "./Components/CartItem";
 import Button from './Components/Button';
-import Search from './Components/Search';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      beachGear:[
-        {
-          id:1,
-          name:'Flip Flops',
-          description:'Some flippy floppys',
-          price:5.99,
-          image:'http://via.placeholder.com/350x150'
-        },
-        {
-          id:2,
-          name:'Tent',
-          description:'TENTS',
-          price:6.99,
-          image:'http://via.placeholder.com/350x150'
-        },
-      ],
-        camping:[
-          {
-            id:3,
-            name:'Sun tan lotion',
-            description:'Gotta look fly guy',
-            price:7.99,
-            image:'http://via.placeholder.com/350x150'
-          },
-          {
-            id:4,
-            name:'Mice',
-            description:'Not blind',
-            price:8.99,
-            image:'http://via.placeholder.com/350x150'
-          },
-
-      ],
-      candy:[],
-      clothing:[],
-      shoes:[],
-      cart:[],
-      toggleCard:false,
-      apiKey:'',
-      searchCategory:'',
-      searchString:''
-    }
+      addressInput: "",
+      ccInput: "",
+      display: "products",
+      cart: [],
+      apiKey: "",
+      searchInput: "",
+      cardView: true,
+      products: [],
+      camping: [],
+      candy: [],
+      clothing: [],
+      food: [],
+      nameInput: "",
+      descriptionInput: "",
+      imageURLInput: "",
+      priceInput: null,
+      categoryInput: ""
+    };
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
-    this.handleRemoveItemFromCart = this.handleRemoveItemFromCart.bind(this);
-    this.toggleCardView = this.toggleCardView.bind(this);
-    this.addProduct = this.addProduct.bind(this);
-    this.changeQuantity = this.changeQuantity.bind(this);
-    this.handleSearchCategory = this.handleSearchCategory.bind(this);
-    this.handleSearchString = this.handleSearchString.bind(this);
-    this.search = this.search.bind(this);
-  }
-  componentDidMount(){
-    axios.get('/api/key').then( response => {
-      console.log('key response:', response)
-      this.setState({
-        apiKey:response.data.apiKey
-      })
-      axios.get(`/api/products?key=${this.state.apiKey}`).then( response => {
-        console.log('products response: ', response)
-        this.setState({
-          camping:response.data.filter( product => product.category === 'camping'),
-          clothing:response.data.filter( product => product.category === 'clothing'),
-          shoes:response.data.filter( product => product.category === 'shoes'),
-          candy:response.data.filter( product => product.category === 'candy')
-        })
-      })
-    })
-  }
-  addProduct( product ){
-    console.log('product to add:', product)
-    axios.post(`/api/products?key=${this.state.apiKey}`, product).then( response => {
-      console.log(response)
-      this.setState({
-        [product.category]:response.data.filter( serverProduct => serverProduct.category === product.category)
-      })
-    })
   }
 
-  handleAddItemToCart( item ){
-    // let newCart = this.state.cart.map( cartItem => {
-    //   return {
-    //     id:cartItem.id,
-    //     name:cartItem.name,
-    //     description:cartItem.description,
-    //     price:cartItem.price,
-    //     imageUrl:cartItem.imageUrl
-    //   }
-    // })
-    // newCart.push(item)
-    // this.setState({
-    //   cart:newCart
-    // })
-    axios.post(`/api/cart/${item.id}?key=${this.state.apiKey}`).then( response => {
-      console.log('add item to cart response: ', response.data)
+  componentDidMount() {
+    // get api key
+    // then get all products
+    axios.get("/api/key").then(apiKeyResponse => {
+      const key = apiKeyResponse.data.apiKey;
+      axios.get("/api/products?key=" + key).then(productsResponse => {
+        console.log("products from server: ___", productsResponse.data);
+        productsResponse.data.forEach(item => (item.quantity = 0));
+        // filter results onto arrays
+        let camping = productsResponse.data.filter(item => item.category === "camping");
+        let candy = productsResponse.data.filter(item => item.category === "candy");
+        let clothing = productsResponse.data.filter(item => item.category === "clothing");
+        let food = productsResponse.data.filter(item => item.category === "food");
+        this.setState({
+          products: productsResponse.data,
+          apiKey: key,
+          camping,
+          candy,
+          clothing,
+          food
+        });
+      });
+    });
+  }
+  createNewProduct = () => {
+    // post new product to server
+    // name, desc, price, imageURL
+    let {
+      nameInput: name,
+      descriptionInput: description,
+      priceInput: price,
+      imageURLInput: image,
+      categoryInput: category,
+      apiKey: key
+    } = this.state;
+    price = parseFloat(price);
+    const newProduct = { name, description, price, category, image };
+    axios.post("/api/products?key=" + key, newProduct).then(productsResponse => {
+      console.log("products from server: ___", productsResponse.data);
+      productsResponse.data.forEach(item => (item.quantity = 0));
+      // filter results onto arrays
+      let camping = productsResponse.data.filter(item => item.category === "camping");
+      let candy = productsResponse.data.filter(item => item.category === "candy");
+      let clothing = productsResponse.data.filter(item => item.category === "clothing");
+      let food = productsResponse.data.filter(item => item.category === "food");
       this.setState({
-        cart:response.data
-      })
-    })
+        products: productsResponse.data,
+        apiKey: key,
+        camping,
+        candy,
+        clothing,
+        food
+      });
+    });
+  };
+  toggleDisplay = () => this.setState({ display: this.state.display === "products" ? "cart" : "products" });
+  toggleView = () => this.setState({ cardView: !this.state.cardView });
+  handleAddressInput = event => this.setState({ addressInput: event.target.value });
+  handleCCInput = event => this.setState({ ccInput: event.target.value });
+  deleteFromCart = itemID => {
+    axios
+      .delete("/api/cart/" + itemID + "?key=" + this.state.apiKey)
+      .then(cartResponse => this.setState({ cart: cartResponse.data }));
+  };
+  navigate = value => this.setState({ display: value });
+  handleSearch = () => {
+    axios.get(`/api/cart?key=${this.state.apiKey}&name=${this.state.searchInput}`)
   }
-  handleRemoveItemFromCart( id ){
-    axios.delete(`/api/cart/${id}?key=${this.state.apiKey}`).then( response => {
-      this.setState({
-        cart:response.data
-      })
-    })
+  handleAddItemToCart(itemID) {
+    axios
+      .post("/api/cart/" + itemID + "?key=" + this.state.apiKey)
+      .then(cartResponse => this.setState({ cart: cartResponse.data }));
   }
-  changeQuantity( item, change){
-    axios.put(`/api/cart?key=${this.state.apiKey}`, {id:item.id, quantity:item.quantity+change}).then( response => {
-      console.log('change quantity response: ', response)
-      this.setState({
-        cart:response.data
-      })
-    })
+  checkout() {
+    if (!this.state.addressInput || !this.state.ccInput) {
+      alert("Fill out required fields first.");
+    } else if (this.state.cart.length === 0) {
+      alert("cart is empty.");
+    } else {
+      alert("Here's yer stuff");
+      axios.delete("api/cart/checkout?key=" + this.state.apiKey).then(checkoutResponse => {
+        this.setState({
+          cart: checkoutResponse.data,
+          addressInput: "",
+          ccInput: ""
+        });
+      });
+    }
   }
-  checkout(){
-    alert("Here's yer stuff")
-    // this.setState({
-    //   cart:[]
-    // })
-    axios.delete(`/api/checkout?key=${this.state.apiKey}`).then( response => {
-      this.setState({
-        cart:response.data //or set it to response from server, which I assumed would be an empty array representing the cart
-      })
-    })
-  }
-  toggleCardView(){
-    this.setState({
-      toggleCard:!this.state.toggleCard
-    })
-  }
-  handleSearchString( searchString ){
-    this.setState({
-      searchString
-    })
-  }
-  handleSearchCategory( searchCategory ){
-    this.setState({
-      searchCategory
-    })
-  }
-  search(){
-    const { searchCategory, searchString, apiKey } = this.state;
-    let queryString = searchCategory ? `&category=${searchCategory}` : '';
-    queryString = searchString ? queryString + `&name=${searchString}` : queryString;
-    axios.get(`/api/products?key=${apiKey}${queryString}`).then( response => {
-      console.log('search response: ', response)
-      this.setState({
-        camping:response.data.filter( product => product.category === 'camping'),
-        clothing:response.data.filter( product => product.category === 'clothing'),
-        shoes:response.data.filter( product => product.category === 'shoes'),
-        candy:response.data.filter( product => product.category === 'candy')
-      })
-    })
-  }
-  
   render() {
+    console.log("___", this.state);
+
     return (
       <div>
-        <Search
-          handleSearchCategory={this.handleSearchCategory}
-          handleSearchString={this.handleSearchString}
-          searchCategory={this.state.searchCategory}
-          searchString={this.state.searchString}
-          searchFn={this.search}
-        />
-        <AddProduct
-          addItem={this.handleAddItemToCart}
-          addProduct={this.addProduct}
-        />
-        <div className='products'>
-          <h1>PRODUCTS</h1>
-          {/* <button onClick={this.toggleCardView}>Toggle View</button> */}
-          <Button handleClick={this.toggleCardView} text='Toggle View'/>
-          {/* <h2>Beach Gear</h2>
-          {
-            this.state.beachGear.map( item => {
-              return(
-                <Product
-                  item={item}
-                  addProduct={this.addProduct}
-                  cardView={this.state.toggleCard}
-                  key={item.id}
-                />
-              )
-            })
-          } */}
-          <h2>Camping</h2>
-          {
-            this.state.camping.map( item => {
-              return(
-                <Product
-                  item={item}
-                  addItem={this.handleAddItemToCart}
-                  cardView={this.state.toggleCard}
-                  key={item.id}
-                />
-              )
-            })
-          }
-          <h2>Clothing</h2>
-          {
-            this.state.clothing.map( item => {
-              return(
-                <Product
-                  item={item}
-                  addItem={this.handleAddItemToCart}
-                  cardView={this.state.toggleCard}
-                  key={item.id}
-                />
-              )
-            })
-          }
-          <h2>Shoes</h2>
-          {
-            this.state.shoes.map( item => {
-              return(
-                <Product
-                  item={item}
-                  addItem={this.handleAddItemToCart}
-                  cardView={this.state.toggleCard}
-                  key={item.id}
-                />
-              )
-            })
-          }
-          <h2>Candy</h2>
-          {
-            this.state.candy.map( item => {
-              return(
-                <Product
-                  item={item}
-                  addItem={this.handleAddItemToCart}
-                  cardView={this.state.toggleCard}
-                  key={item.id}
-                />
-              )
-            })
-          }
-          
-        </div>
-        <div className='side_bar'>
-          <div className='cart'>
-            <h1>CART</h1>
-            {
-              this.state.cart.map( item => {
-                return( 
-                  <CartItem
-                    item={item}
-                    key={item.id}
-                    removeItem={this.handleRemoveItemFromCart}
-                    changeQuantity={this.changeQuantity}
-                  />
-                )
-              })
-            }
+        <nav className="nav">
+          <span onClick={_ => this.navigate("products")}>products</span> |{" "}
+          <span onClick={_ => this.navigate("cart")}>cart</span>
+        </nav>
+        {this.state.display === "products" ? (
+          <section className="products">
+            <div className="products_header">
+              <h1>PRODUCTS</h1>
+              <div className="button_container">
+                <label>search</label>
+                <input type="text" value={this.state.searchInput} onChange={evt=>this.setState({searchInput:evt.target.value})} />
+                <br />
+                <Button handleClick={this.toggleView} text="toggle view"/><Button handleClick={this.handleSearch} text='search'/>
+              </div>
+            </div>
+            <div className="new-product-form">
+              <table>
+                <th colSpan="2">
+                  <h4>Create New Product</h4>
+                </th>
+                <tr>
+                  <td>name: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.nameInput}
+                      onChange={event => this.setState({ nameInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>description: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.descriptionInput}
+                      onChange={event => this.setState({ descriptionInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>image URL: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.imageURLInput}
+                      onChange={event => this.setState({ imageURLInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>category: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.categoryInput}
+                      onChange={event => this.setState({ categoryInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>price: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.priceInput}
+                      onChange={event => this.setState({ priceInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="2">
+                    <Button handleClick={this.createNewProduct}text="submit"/>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <table className="products_body">
+              <thead>
+                <th colSpan="2">
+                  <h2>Camping</h2>
+                </th>
+              </thead>
+              {this.state.camping.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+              })}
 
-          </div>
-          <div className='total'>
-            <h1>TOTAL</h1>
-            <p>${
-              this.state.cart.reduce( ( accumulator, current ) => accumulator+= current.price*current.quantity,0)
-            }</p>
-            {/* <button onClick={this.checkout}>Checkout</button> */}
-            <Button handleClick={this.checkout} text='Checkout'/>
-          </div>
-        </div>
+              <thead>
+                <th colSpan="2">
+                  <h2>Candy</h2>
+                </th>
+              </thead>
+              {this.state.candy.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+              })}
+
+              <thead>
+                <th colSpan="2">
+                  <h2>Clothing</h2>
+                </th>
+              </thead>
+              {this.state.clothing.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+              })}
+
+              <thead>
+                <th colSpan="2">
+                  <h2>Food</h2>
+                </th>
+              </thead>
+              {this.state.food.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+              })}
+            </table>
+          </section>
+        ) : (
+          // else
+          <section className="cart">
+            <div className="cart_header">
+              <h1>CART</h1>
+              <div className="total">
+                <table>
+                  <tr>
+                    <td>
+                      <label>address</label>
+                    </td>
+                    <td>
+                      <input type="text" value={this.state.addressInput} onChange={this.handleAddressInput} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>credit card number</label>
+                    </td>
+                    <td>
+                      <input type="text" value={this.state.ccInput} onChange={this.handleCCInput} />
+                    </td>
+                  </tr>
+                </table>
+                <h4>TOTAL</h4>
+                <p>
+                  $
+                  {this.state.cart
+                    .reduce((accumulator, current) => (accumulator += current.price * current.quantity), 0)
+                    .toFixed(2)}
+                </p>
+                <Button handleClick={this.checkout} text="Checkout"/>
+              </div>
+            </div>
+            <table className="cart_body">
+              {this.state.cart.map(item => (
+                <CartItem item={item} deleteFromCart={this.deleteFromCart} />
+              ))}
+            </table>
+          </section>
+        )}
       </div>
     );
   }
 }
 
 export default App;
-// Day 3
-//     HTTP and axios
-//     Lifecycle methods and rest
-//     1. list of products from the server, also add a new product to the server. GET, POST
-//     Look into swagger.io for the api key
-//     2. Move full cart experience to the server. Incorporating API to namespace and provide different experience. Also, if user hasn't made cart track quantities insted of adding more items to the list, do this now on the server.
-//     3. Button component, all buttons on the screen with the exact same component.
-//     4. Server side search using query parameters. Seperate API for payments.fileName
+
+// Day 2 starting code starts at day 1's stage 2 solution
+
+// Day2 props
+// proptypes, reusable components, functional component props
+// 1 - List into seperate components, include add to cart functionality
+// 2- Add proptypes onto a list item, Reusable text component, based on props changes styling: header, subtext, list view vs card view required.
+// 3 - ?
+// 4- Add search filter functionality, onchange or onclick, add navbar buttons at the top that toggle between card and product view. Fake if/else conditional rendering. 1 or 2 opportunitiesOther opportunites that text is a functional component. Improve input validation. changing quantities to 0, removes from cart etc.
+// 1 - single screen, sidebar, left side is a list of products.
+// 2 - add in props - list component, list item component, clean it up
+// 3 - add in axios.
+// Each day every project has 4 stages
+// day 1
+// - 1 mini project + 20-30% more
+//     - class, functional, state
+//     - list of products, pre-hardcoded onto state. Click add to cart and it adds it to a list on the sidebar. Clicking add to cart multiple times increases the qty.
+// - 2 is where the afternoon project is now
+//     - get a total, left side, multiple categories. Header for each category that is not seperate component, different background color or header color for each category. Checkout btn, cart is cleared. No nesting state.Each category is a seperate property on state
+// - 3 including concepts from previous days: never super complex
+//     - user input validation
+//     - fake credit card payment
+// - 4 black diamond - almost no direction
+//     - Delete item out of cart, update quantity, update between list and card view on product side. Idea is conditional rendering.
+// Stage 3-4 need to stay independant of other projects. These are the push yourselves levels.

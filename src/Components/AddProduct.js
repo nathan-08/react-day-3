@@ -51,14 +51,8 @@ class AddProduct extends Component {
                 <input onChange={e => this.handlePrice(e.target.value)} value={priceInput}/>
                 <p>Image: </p>
                 <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
-                <p>Category: </p>
-                <select onChange={e => this.handleCategory(e.target.value)} value={categoryInput} >
-                    <option value="camping">Camping</option>
-                    <option value="candy">Candy</option>
-                    <option value="clothing">Clothing</option>
-                    <option value="shoes">Shoes</option>
-                </select>
-                <Button handleClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, image:imageInput, category:categoryInput})}>Submit</Button>
+                <Button handleClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput})}
+                text="Submit"/>
             </div>
         );
     }

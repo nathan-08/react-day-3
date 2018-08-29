@@ -1,19 +1,36 @@
-import React from 'react';
+import React from "react";
+import propTypes from 'prop-types';
+import Text from './Text';
+import Button from './Button';
 
-function CartItem(props) {
-    const { item } = props;
-    return (
-        <div>
-            <h4>{item.name}</h4>
-            <div>
-                <button onClick={() => props.changeQuantity(item, -1)}>-</button>
-                <p>Quantity: {item.quantity}</p>
-                <button onClick={() => props.changeQuantity(item, 1)}>+</button>
-            </div>
-            <p>{item.price}</p>
-            <button onClick={() => props.removeItem(item.id)}>Remove Item</button>
-        </div>
-    );
-
+export default function CartItem(props) {
+  const { item, deleteFromCart } = props;
+  console.log('___cart item props: ', item)
+  return (
+    <tr className="products_container clearfix">
+      <td>
+        <img className="product_img" src={item.image} />
+      </td>
+      <td>
+        <Text text={item.name} isHeader={true}/>
+        <span>{(item.price * item.quantity).toFixed(2)}</span> <span> | qty: </span>
+        <span>{item.quantity}</span>
+        <br />
+        <Button handleClick={_ => deleteFromCart(item.id)} text="remove"/>
+      </td>
+      <td />
+    </tr>
+  );
 }
-export default CartItem;
+
+CartItem.propTypes = {
+    item: propTypes.shape({
+        name: propTypes.string.isRequired,
+        price: propTypes.number.isRequired,
+        id: propTypes.number.isRequired,
+        description: propTypes.string.isRequired,
+        quantity: propTypes.number.isRequired,
+        image: propTypes.string.isRequired
+    }),
+    deleteFromCart: propTypes.func.isRequired
+}
