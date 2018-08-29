@@ -667,10 +667,10 @@ We need to get an API key, and then get a the list of products. Then store these
 
 ```js
 componentDidMount() {
-  axios.get('{{{BASEURL}}}/api/key')
+  axios.get('get_api_key_url')
        .then( apiKeyResponse => {
          // api key is on response.data.apiKey
-        axios.get('{{{BASEURL}}}/api/products?key='+apiKeyResponse.data.apiKey)
+        axios.get('get_all_products?key='+apiKeyResponse.data.apiKey)
              .then( productsResponse => {
                this.setState({
                  apiKey: apiKeyResponse.data.apiKey,
@@ -685,8 +685,8 @@ We can create an AddProduct component, which will be a container of inputs, and 
 
 in App.js
 ```js
-addProduct( product ) {
-  axios.post('{{{BASEURL}}}/api/products?key='+this.state.apiKey, product)
+addProduct( producct ) {
+  axios.post('api_add_product?key='+this.state.apiKey)
        .then( response => this.setState({ products: response.data }))
 }
 // ...
@@ -742,7 +742,7 @@ class AddProduct extends Component {
                 <input onChange={e => this.handlePrice(e.target.value)} value={priceInput}/>
                 <p>Image: </p>
                 <input onChange={e => this.handleImage(e.target.value)} value={imageInput}/>
-                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, image:imageInput})}>Submit</button>
+                <button onClick={() => this.props.addProduct({name:nameInput, description:descriptionInput, price:priceInput, imageUrl:imageInput})}>Submit</button>
             </div>
         );
     }
@@ -758,16 +758,64 @@ export default AddProduct;
 
 ### Summary
 
+In this step we will be changing up the way we handle the cart. All the cart will be stored on the server, and we will have to use HTTP requests to add or remove items from the cart. 
+
 ### Instructions
 
+* `handleAddItemToCart` should be refactored to make an axios post to the appropriate endpoint (see API docs).
+* `handleRemoveItemFromCart` should be refactored to make an axios PUT (we are editing the qty of an item, not necessarily deleting it). Again, refer to the API  docs on which enpoint to hit and how to format the request. 
+
 <details><summary> Detailed Instructions </summary>
+
+Let's refactor our `handleAddItemToCart` method to use axios and send the request to the API
+
+```js
+handleAddItemToCart( item ) {
+  axios.post('/api_add_item_to_cart?key='+this.state.apiKey)
+       .then(response => this.setState({ cart: response.data }))
+}
+```
+
+Let's do the same with `removeItemFromCart`.
+
+```js
+removeItemFromCart( item ) {
+  axios.put('/api_remove_from_cart?key='+this.state.apiKey) {
+       .then(response => this.setState({ cart: response.data }))
+  }
+}
+```
+
 </details>
 
 ## Step 3 
 
+
 ### Summary
 
+In this step we will create a reusable button component, and then replace all of the buttons in our app with this component. 
+
 ### Instructions
+
+* Create a Button.jsx file and create a functional component in this file as the default export. 
+* This component should take two props, for the button text and onclick function.
+
+`Button.jsx`
+```js
+import React from 'react'
+import propTypes from 'prop-types'
+
+function Button (props) {
+    return <button onClick={props.handleClick}>{props.text}</button>;
+}
+
+Button.propTypes = {
+    handleClick: propTypes.func.isRequired,
+    text: propTypes.string.isRequired
+}
+
+export default Button
+```
 
 <details><summary> Detailed Instructions </summary>
 </details>
@@ -775,6 +823,8 @@ export default AddProduct;
 ## Step 4 
 
 ### Summary
+
+In this step we will be refactoring our search function to query the API and render the results. We will also be using the payment API to process user payments. 
 
 ### Instructions
 

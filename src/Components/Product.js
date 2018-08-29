@@ -8,7 +8,7 @@ export default function Product(props) {
     return (
       <tr className="products_container clearfix">
         <td>
-          <img className="product_img" src={item.imageUrl} />
+          <img className="product_img" src={item.image} />
         </td>
         <td>
           <Text text={item.name} isHeader={true}/>
@@ -16,7 +16,7 @@ export default function Product(props) {
           <Text text={item.price} isHeader={false}/>
         </td>
         <td>
-          <button onClick={() => addToCart(item)}>Add to Cart</button>
+          <button onClick={() => addToCart(item.id)}>Add to Cart</button>
         </td>
       </tr>
     );
@@ -29,7 +29,7 @@ export default function Product(props) {
         <td>{item.description}</td>
         <td>{item.price}</td>
         <td>
-          <button onClick={() => addToCart(item)}>Add to Cart</button>
+          <button onClick={() => addToCart(item.id)}>Add to Cart</button>
         </td>
       </tr>
     );
@@ -42,7 +42,7 @@ Product.propTypes = {
     id: propTypes.number.isRequired,
     description: propTypes.string.isRequired,
     quantity: propTypes.number.isRequired,
-    imageUrl: propTypes.string.isRequired
+    image: propTypes.string.isRequired
   }),
   addItem: propTypes.func.isRequired,
   cardView: propTypes.bool
