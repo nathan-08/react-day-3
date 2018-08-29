@@ -7,7 +7,7 @@ export default function CartItem(props) {
   return (
     <tr className="products_container clearfix">
       <td>
-        <img className="product_img" src={item.imageUrl} />
+        <img className="product_img" src={item.image} />
       </td>
       <td>
         <Text text={item.name} isHeader={true}/>
@@ -28,7 +28,7 @@ CartItem.propTypes = {
         id: propTypes.number.isRequired,
         description: propTypes.string.isRequired,
         quantity: propTypes.number.isRequired,
-        imageUrl: propTypes.string.isRequired
+        image: propTypes.string.isRequired
     }),
     deleteFromCart: propTypes.func.isRequired
 }
