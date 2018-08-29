@@ -1,51 +1,50 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import "./../App.css";
-import Text from "./Text";
+import React from "react";
+import propTypes from 'prop-types';
+import Text from './Text';
 import Button from './Button';
 
-class Product extends Component {
-  render() {
-    const { item, cardView } = this.props;
-    return cardView ? (
-      <div>
-        
-        <Text 
-            text={item.name} 
-            isHeader={true}
-        />
-        <Text
-            text={'$' + item.price}
-            isHeader={false}
-        />
-        {/* <button onClick={() => this.props.addItem(item)}>Add to Cart</button> */}
-        <Button handleClick={() => this.props.addItem(item)} text='Add to Cart'/>
-        
-      </div>
-    ) : (
-      <div>
-        <img src={item.imageUrl} alt="the item" />
-        <Text
-            text={item.name}
-            isHeader={true}
-        />
-        <Text
-            text={item.description}
-            isHeader={false}
-        />
-        <Text
-            text={'$' + item.price}
-            isHeader={false}
-        />
-        {/* <button onClick={() => this.props.addItem(item)}>Add to Cart</button> */}
-        <Button handleClick={() => this.props.addItem(item)} text='Add to Cart'/>
-      </div>
+export default function Product(props) {
+  const { item, cardView, addToCart } = props;
+  if (cardView)
+    return (
+      <tr className="products_container clearfix">
+        <td>
+          <img className="product_img" src={item.image} />
+        </td>
+        <td>
+          <Text text={item.name} isHeader={true}/>
+          <Text text={item.description} isHeader={false}/>
+          <Text text={item.price} isHeader={false}/>
+        </td>
+        <td>
+          <Button handleClick={() => addToCart(item.id)} text="Add to Cart"/>
+        </td>
+      </tr>
     );
-  }
+  else
+    return (
+      <tr className="product_container clearfix">
+        <td>
+          <Text text={item.name} isHeader={true}/>
+        </td>
+        <td>{item.description}</td>
+        <td>{item.price}</td>
+        <td>
+          <Button handleClick={() => addToCart(item.id)} text="Add to Cart"/>
+        </td>
+      </tr>
+    );
 }
+
 Product.propTypes = {
-  item: PropTypes.object.isRequired,
-  addItem: PropTypes.func.isRequired,
-  cardView: PropTypes.bool
+  item: propTypes.shape({
+    name: propTypes.string.isRequired,
+    price: propTypes.number.isRequired,
+    id: propTypes.number.isRequired,
+    description: propTypes.string.isRequired,
+    quantity: propTypes.number.isRequired,
+    image: propTypes.string.isRequired
+  }),
+  addItem: propTypes.func.isRequired,
+  cardView: propTypes.bool
 };
-export default Product;
