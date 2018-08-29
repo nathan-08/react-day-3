@@ -7,6 +7,17 @@ p, h1, h2, h4 {
   margin: 0;
   padding: 0;
 }
+.new-product-form {
+  padding: 1rem;
+  text-align: center;
+}
+.new-product-form table {
+  margin: 0 auto;
+  text-align: right;
+}
+.new-product-form h4, .new-product-form td:last-child {
+  text-align: center;
+}
 .nav {
   background: var(--dark);
   width: 100%;

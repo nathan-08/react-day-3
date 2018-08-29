@@ -16,46 +16,8 @@ class App extends Component {
       searchInput: '',
       cardView: true,
       products: [],
-      beachGear: [
-        {
-          id: 1,
-          name: "Flip Flops",
-          description: "Some flippy floppys",
-          price: 5.99,
-          quantity: 0,
-          imageUrl:
-            "https://i.pinimg.com/736x/86/51/8c/86518c2adfb760bf5e9091841ab6fc9c--girls-flip-flops-beach-flip-flops.jpg"
-        },
-        {
-          id: 3,
-          name: "Sun tan lotion",
-          description: "Gotta look fly guy",
-          price: 7.99,
-          quantity: 0,
-          imageUrl:
-            "https://images.all-free-download.com/images/graphicthumb/summer_cream_protect_lotion_design_vector_582414.jpg"
-        }
-      ],
-      camping: [
-        {
-          id: 2,
-          name: "Tent",
-          description: "TENTS",
-          price: 6.99,
-          quantity: 0,
-          imageUrl:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhEXFLblyNPD1fknwWEaJ-sc_t6o0NANN1ZHltRn6CuEbJUTT0aQ"
-        },
-        {
-          id: 4,
-          name: "Mice",
-          description: "Not blind",
-          price: 8.99,
-          quantity: 0,
-          imageUrl:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Assorted_computer_mice_-_MfK_Bern.jpg/220px-Assorted_computer_mice_-_MfK_Bern.jpg"
-        }
-      ]
+      camping: [], candy: [], clothing: [], food: [],
+      nameInput: '', descriptionInput: '', imageURLInput: '', priceInput: null, categoryInput: ''
     };
     this.checkout = this.checkout.bind(this);
     this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
@@ -69,14 +31,43 @@ class App extends Component {
       axios.get('/api/products?key=' + key)
            .then(productsResponse => {
              console.log('products from server: ___', productsResponse.data)
+             productsResponse.data.forEach(item=>item.quantity = 0)
+             // filter results onto arrays
+             let camping  = productsResponse.data.filter(item=>item.category==="camping")
+             let candy    = productsResponse.data.filter(item=>item.category==="candy")
+             let clothing = productsResponse.data.filter(item=>item.category==="clothing")
+             let food     = productsResponse.data.filter(item=>item.category==="food")
              this.setState({
                products: productsResponse.data,
-               apiKey: key
-             })
+               apiKey: key,
+               camping, candy, clothing, food
+              })
            })
     })
   }
-
+  createNewProduct = () => {
+    // post new product to server
+    // name, desc, price, imageURL
+    let { nameInput: name, descriptionInput: description, priceInput: price, imageURLInput: image, categoryInput: category, apiKey: key } = this.state
+    price = parseFloat(price)
+    const newProduct = { name, description, price, category, image }
+    axios.post('/api/products?key=' + key, newProduct)
+         .then(productsResponse => {
+          console.log('products from server: ___', productsResponse.data)
+          productsResponse.data.forEach(item=>item.quantity = 0)
+          // filter results onto arrays
+          let camping  = productsResponse.data.filter(item=>item.category==="camping")
+          let candy    = productsResponse.data.filter(item=>item.category==="candy")
+          let clothing = productsResponse.data.filter(item=>item.category==="clothing")
+          let food     = productsResponse.data.filter(item=>item.category==="food")
+          this.setState({
+            products: productsResponse.data,
+            apiKey: key,
+            camping, candy, clothing, food
+           })
+        })
+    
+  }
   toggleDisplay = () => this.setState({ display: this.state.display==="products"?"cart":"products"})
   toggleView = () => this.setState({ cardView: !this.state.cardView });
   handleAddressInput = event => this.setState({ addressInput: event.target.value });
@@ -125,6 +116,8 @@ class App extends Component {
     }
   }
   render() {
+    console.log('___',this.state)
+
     return (
       <div>
         <nav className="nav"><span onClick={_=>this.navigate('products')}>products</span> | <span onClick={_=>this.navigate('cart')}>cart</span></nav>
@@ -138,29 +131,87 @@ class App extends Component {
             <button onClick={this.toggleView}>toggle view</button>
             </div>
           </div>
+          <div className="new-product-form">
+            <table> 
+              <th colspan="2"><h4>Create New Product</h4></th>
+              <tr>
+                <td>name: </td>
+                <td><input type="text" value={this.state.nameInput}
+                           onChange={event=>this.setState({nameInput:event.target.value})}></input></td>
+              </tr>
+              <tr>
+                <td>description: </td>
+                <td><input type="text" value={this.state.descriptionInput}
+                           onChange={event=>this.setState({descriptionInput:event.target.value})}></input></td>
+              </tr>
+              <tr>
+                <td>image URL: </td>
+                <td><input type="text" value={this.state.imageURLInput}
+                           onChange={event=>this.setState({imageURLInput:event.target.value})}></input></td>
+              </tr>
+              <tr>
+                <td>category: </td>
+                <td><input type="text" value={this.state.categoryInput}
+                           onChange={event=>this.setState({categoryInput:event.target.value})}></input></td>
+              </tr>
+              <tr>
+                <td>price: </td>
+                <td><input type="text" value={this.state.priceInput}
+                           onChange={event=>this.setState({priceInput:event.target.value})}></input></td>
+              </tr>
+              <tr><td colspan="2"><button onClick={this.createNewProduct}>submit</button></td></tr>
+
+            
+            </table>
+          </div>
           <table className="products_body">
             <thead>
               <th colspan="2">
-                <h2>Beach Gear</h2>
+                <h2>Camping</h2>
               </th>
             </thead>
-            {this.state.beachGear.map(item =>{ 
+            {this.state.camping.map(item =>{ 
             if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
             return <Product 
               item={item} 
               addToCart={this.handleAddItemToCart} 
               cardView={this.state.cardView}
             />})}
+
+
             <thead><th colspan="2">
-            <h2>Camping</h2></th>
+            <h2>Candy</h2></th>
             </thead>
-            {this.state.camping.map(item =>{ 
+            {this.state.candy.map(item =>{ 
             if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
             return <Product
               item={item}
               addToCart={this.handleAddItemToCart}
               cardView={this.state.cardView}
             />})}
+
+              <thead><th colspan="2">
+            <h2>Clothing</h2></th>
+            </thead>
+            {this.state.clothing.map(item =>{ 
+            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+            return <Product
+              item={item}
+              addToCart={this.handleAddItemToCart}
+              cardView={this.state.cardView}
+            />})}
+
+            <thead><th colspan="2">
+            <h2>Food</h2></th>
+            </thead>
+            {this.state.food.map(item =>{ 
+            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+            return <Product
+              item={item}
+              addToCart={this.handleAddItemToCart}
+              cardView={this.state.cardView}
+            />})}
+
           </table>
         </section>
         // else
