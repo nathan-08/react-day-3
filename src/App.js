@@ -97,8 +97,7 @@ class App extends Component {
   };
   navigate = value => this.setState({ display: value });
   handleSearch = () => {
-    if(!this.state.searchInput) return null;
-    axios.get(`/api/cart?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    axios.get(`/api/products?key=${this.state.apiKey}&name=${this.state.searchInput}`)
     .then(productsResponse => {
       console.log('result from search query: ', productsResponse)
       productsResponse.data.forEach(item => (item.quantity = 0));

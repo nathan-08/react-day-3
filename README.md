@@ -837,8 +837,23 @@ In this step we will be refactoring our search function to query the API and ren
 
 ```js
 handleSearch = () => {
-    axios.get('/api/cart?key=${this.state.apiKey}&name=${this.state.searchInput}`)
-    .then(response=>this.setState({cart: response.data}))
+    axios.get('/api/products?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    .then(productsResponse => {
+      console.log('result from search query: ', productsResponse)
+      productsResponse.data.forEach(item => (item.quantity = 0));
+      // filter results onto arrays
+      let camping = productsResponse.data.filter(item => item.category === "camping");
+      let candy = productsResponse.data.filter(item => item.category === "candy");
+      let clothing = productsResponse.data.filter(item => item.category === "clothing");
+      let food = productsResponse.data.filter(item => item.category === "food");
+      this.setState({
+        products: productsResponse.data,
+        camping,
+        candy,
+        clothing,
+        food
+      });
+    });
 }
 ```
 
