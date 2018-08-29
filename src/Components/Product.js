@@ -8,7 +8,7 @@ export default function Product(props) {
     return (
       <tr className="products_container clearfix">
         <td>
-          <img className="product_img" src={item.imageUrl} />
+          <img className="product_img" src={item.image} />
         </td>
         <td>
           <Text text={item.name} isHeader={true}/>
@@ -42,7 +42,7 @@ Product.propTypes = {
     id: propTypes.number.isRequired,
     description: propTypes.string.isRequired,
     quantity: propTypes.number.isRequired,
-    imageUrl: propTypes.string.isRequired
+    image: propTypes.string.isRequired
   }),
   addItem: propTypes.func.isRequired,
   cardView: propTypes.bool
