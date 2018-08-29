@@ -135,7 +135,7 @@ class App extends Component {
                 <label>search</label>
                 <input type="text" value={this.state.searchInput} onChange={this.handleSearch} />
                 <br />
-                <Button handleClick={this.toggleView} test="toggle view">toggle view</Button>
+                <Button handleClick={this.toggleView} text="toggle view"/>
               </div>
             </div>
             <div className="new-product-form">
