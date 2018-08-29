@@ -686,7 +686,7 @@ We can create an AddProduct component, which will be a container of inputs, and 
 in App.js
 ```js
 addProduct( product ) {
-  axios.post('{{{BASEURL}}}/api/?key='+this.state.apiKey, product)
+  axios.post('{{{BASEURL}}}/api/products?key='+this.state.apiKey, product)
        .then( response => this.setState({ products: response.data }))
 }
 // ...
@@ -758,34 +758,9 @@ export default AddProduct;
 
 ### Summary
 
-In this step we will be changing up the way we handle the cart. All the cart will be stored on the server, and we will have to use HTTP requests to add or remove items from the cart. 
-
 ### Instructions
 
-* `handleAddItemToCart` should be refactored to make an axios post to the appropriate endpoint (see API docs).
-* `handleRemoveItemFromCart` should be refactored to make an axios PUT (we are editing the qty of an item, not necessarily deleting it). Again, refer to the API  docs on which enpoint to hit and how to format the request. 
-
 <details><summary> Detailed Instructions </summary>
-
-Let's refactor our `handleAddItemToCart` method to use axios and send the request to the API
-
-```js
-handleAddItemToCart( item ) {
-  axios.post(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`)
-       .then(response => this.setState({ cart: response.data }))
-}
-```
-
-Let's do the same with `removeItemFromCart`.
-
-```js
-removeItemFromCart( item ) {
-  axios.delete(`{{{BASEURL}}}/api/cart/${item}?key=${this.state.apiKey}`) {
-       .then(response => this.setState({ cart: response.data }))
-  }
-}
-```
-
 </details>
 
 ## Step 3 
