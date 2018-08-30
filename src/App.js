@@ -34,9 +34,9 @@ class App extends Component {
   componentDidMount() {
     // get api key
     // then get all products
-    axios.get("/api/key").then(apiKeyResponse => {
+    axios.get("/products/key").then(apiKeyResponse => {
       const key = apiKeyResponse.data.apiKey;
-      axios.get("/api/products?key=" + key).then(productsResponse => {
+      axios.get("/products/catalog?key=" + key).then(productsResponse => {
         console.log("products from server: ___", productsResponse.data);
         productsResponse.data.forEach(item => (item.quantity = 0));
         // filter results onto arrays
@@ -68,7 +68,7 @@ class App extends Component {
     } = this.state;
     price = parseFloat(price);
     const newProduct = { name, description, price, category, image };
-    axios.post("/api/products?key=" + key, newProduct).then(productsResponse => {
+    axios.post("/products/catalog?key=" + key, newProduct).then(productsResponse => {
       console.log("products from server: ___", productsResponse.data);
       productsResponse.data.forEach(item => (item.quantity = 0));
       // filter results onto arrays
@@ -92,12 +92,12 @@ class App extends Component {
   handleCCInput = event => this.setState({ ccInput: event.target.value });
   deleteFromCart = itemID => {
     axios
-      .delete("/api/cart/" + itemID + "?key=" + this.state.apiKey)
+      .delete("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
   };
   navigate = value => this.setState({ display: value });
   handleSearch = () => {
-    axios.get(`/api/products?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    axios.get(`/products/catalog?key=${this.state.apiKey}&name=${this.state.searchInput}`)
     .then(productsResponse => {
       console.log('result from search query: ', productsResponse)
       productsResponse.data.forEach(item => (item.quantity = 0));
@@ -117,7 +117,7 @@ class App extends Component {
   }
   handleAddItemToCart(itemID) {
     axios
-      .post("/api/cart/" + itemID + "?key=" + this.state.apiKey)
+      .post("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
   }
   checkout() {
