@@ -26,9 +26,9 @@ class App extends Component {
   componentDidMount(){
     // get api key
     // then get all products
-    axios.get('/api/key').then(apiKeyResponse=>{
+    axios.get('/products/key').then(apiKeyResponse=>{
       const key = apiKeyResponse.data.apiKey;
-      axios.get('/api/products?key=' + key)
+      axios.get('/products/catalog?key=' + key)
            .then(productsResponse => {
              console.log('products from server: ___', productsResponse.data)
              productsResponse.data.forEach(item=>item.quantity = 0)
@@ -51,7 +51,7 @@ class App extends Component {
     let { nameInput: name, descriptionInput: description, priceInput: price, imageURLInput: image, categoryInput: category, apiKey: key } = this.state
     price = parseFloat(price)
     const newProduct = { name, description, price, category, image }
-    axios.post('/api/products?key=' + key, newProduct)
+    axios.post('/products/catalog?key=' + key, newProduct)
          .then(productsResponse => {
           console.log('products from server: ___', productsResponse.data)
           productsResponse.data.forEach(item=>item.quantity = 0)
