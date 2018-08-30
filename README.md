@@ -799,6 +799,7 @@ In this step we will create a reusable button component, and then replace all of
 
 * Create a Button.jsx file and create a functional component in this file as the default export. 
 * This component should take two props, for the button text and onclick function.
+<details><summary> Detailed Instructions </summary>
 
 `Button.jsx`
 ```js
@@ -816,7 +817,7 @@ Button.propTypes = {
 
 export default Button
 ```
-
+</details>
 <details><summary> Detailed Instructions </summary>
 </details>
 
