@@ -2,7 +2,10 @@
   "name": "react-day-3",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": {
+    "/products/*":{ "target": "http://localhost:5000"} ,
+     "/payment/*": { "target": "http://localhost:5500"} 
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "react": "^16.4.2",
