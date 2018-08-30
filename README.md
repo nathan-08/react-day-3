@@ -659,7 +659,7 @@ In Step 1 we will use axios to get a list of products from the server. We will b
 
 * Refer to API docs to get an API key. Store this key on state. This will be used as a query parameter in all other requests.
 * Once we have an API key, we need to get all products from the API. (both of these steps can happen in componentDidMount)
-* We will create a form where users can create a new product and submit it to the server. This should take in a name, desscriptions, price, and image url. 
+* We will create a form where users can create a new product and submit it to the server. This should take in a name, descriptions, price, and image url. 
 
 <details><summary> Detailed Instructions </summary>
 
