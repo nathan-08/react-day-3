@@ -818,8 +818,7 @@ Button.propTypes = {
 export default Button
 ```
 </details>
-<details><summary> Detailed Instructions </summary>
-</details>
+
 
 ## Step 4 
 
