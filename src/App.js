@@ -127,7 +127,7 @@ class App extends Component {
       alert("cart is empty.");
     } else {
       alert("Here's yer stuff");
-      axios.delete("api/cart/checkout?key=" + this.state.apiKey).then(checkoutResponse => {
+      axios.delete("api/checkout?key=" + this.state.apiKey).then(checkoutResponse => {
         this.setState({
           cart: checkoutResponse.data,
           addressInput: "",
