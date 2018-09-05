@@ -4,8 +4,8 @@ import Text from './Text';
 import Button from './Button';
 
 export default function Product(props) {
-  const { item, cardView, addToCart } = props;
-  if (cardView)
+  const { item, toggleView, addToCart } = props;
+  if (toggleView)
     return (
       <tr className="products_container clearfix">
         <td>
@@ -46,5 +46,5 @@ Product.propTypes = {
     image: propTypes.string.isRequired
   }),
   addItem: propTypes.func.isRequired,
-  cardView: propTypes.bool
+  toggleView: propTypes.bool
 };

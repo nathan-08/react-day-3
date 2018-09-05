@@ -15,7 +15,7 @@ class App extends Component {
       cart: [],
       apiKey: "",
       searchInput: "",
-      cardView: true,
+      toggleView: true,
       products: [],
       camping: [],
       candy: [],
@@ -28,7 +28,7 @@ class App extends Component {
       categoryInput: ""
     };
     this.checkout = this.checkout.bind(this);
-    this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
+    this.addToCart = this.addToCart.bind(this);
   }
 
   componentDidMount() {
@@ -87,10 +87,10 @@ class App extends Component {
     });
   };
   toggleDisplay = () => this.setState({ display: this.state.display === "products" ? "cart" : "products" });
-  toggleView = () => this.setState({ cardView: !this.state.cardView });
+  toggleView = () => this.setState({ toggleView: !this.state.toggleView });
   handleAddressInput = event => this.setState({ addressInput: event.target.value });
   handleCCInput = event => this.setState({ ccInput: event.target.value });
-  deleteFromCart = itemID => {
+  removeFromCart = itemID => {
     axios
       .delete("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
@@ -99,8 +99,6 @@ class App extends Component {
   handleSearch = () => {
     axios.get(`/products/catalog?key=${this.state.apiKey}&name=${this.state.searchInput}`)
     .then(productsResponse => {
-      console.log('result from search query: ', productsResponse)
-      productsResponse.data.forEach(item => (item.quantity = 0));
       // filter results onto arrays
       let camping = productsResponse.data.filter(item => item.category === "camping");
       let candy = productsResponse.data.filter(item => item.category === "candy");
@@ -115,7 +113,7 @@ class App extends Component {
       });
     });
   }
-  handleAddItemToCart(itemID) {
+  addToCart(itemID) {
     axios
       .post("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
@@ -225,7 +223,7 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.camping.map(item => {
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
               })}
 
               <thead>
@@ -234,7 +232,7 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.candy.map(item => {
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
               })}
 
               <thead>
@@ -243,7 +241,7 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.clothing.map(item => {
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
               })}
 
               <thead>
@@ -252,7 +250,7 @@ class App extends Component {
                 </th>
               </thead>
               {this.state.food.map(item => {
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
               })}
             </table>
           </section>
@@ -292,7 +290,7 @@ class App extends Component {
             </div>
             <table className="cart_body">
               {this.state.cart.map(item => (
-                <CartItem item={item} deleteFromCart={this.deleteFromCart} />
+                <CartItem item={item} removeFromCart={this.removeFromCart} />
               ))}
             </table>
           </section>
