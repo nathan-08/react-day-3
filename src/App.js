@@ -28,7 +28,7 @@ class App extends Component {
       categoryInput: ""
     };
     this.checkout = this.checkout.bind(this);
-    this.handleAddItemToCart = this.handleAddItemToCart.bind(this);
+    this.addToCart = this.addToCart.bind(this);
   }
 
   componentDidMount() {
@@ -90,14 +90,14 @@ class App extends Component {
   toggleView = () => this.setState({ cardView: !this.state.cardView });
   handleAddressInput = event => this.setState({ addressInput: event.target.value });
   handleCCInput = event => this.setState({ ccInput: event.target.value });
-  deleteFromCart = itemID => {
+  removeFromCart = itemID => {
     axios
       .delete("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
   };
   navigate = value => this.setState({ display: value });
   handleSearch = event => this.setState({ searchInput: event.target.value });
-  handleAddItemToCart(itemID) {
+  addToCart(itemID) {
     axios
       .post("/products/cart/" + itemID + "?key=" + this.state.apiKey)
       .then(cartResponse => this.setState({ cart: cartResponse.data }));
@@ -208,7 +208,7 @@ class App extends Component {
               </thead>
               {this.state.camping.map(item => {
                 if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
               })}
 
               <thead>
@@ -218,7 +218,7 @@ class App extends Component {
               </thead>
               {this.state.candy.map(item => {
                 if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
               })}
 
               <thead>
@@ -228,7 +228,7 @@ class App extends Component {
               </thead>
               {this.state.clothing.map(item => {
                 if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
               })}
 
               <thead>
@@ -238,7 +238,7 @@ class App extends Component {
               </thead>
               {this.state.food.map(item => {
                 if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.handleAddItemToCart} cardView={this.state.cardView} />;
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
               })}
             </table>
           </section>
@@ -278,7 +278,7 @@ class App extends Component {
             </div>
             <table className="cart_body">
               {this.state.cart.map(item => (
-                <CartItem item={item} deleteFromCart={this.deleteFromCart} />
+                <CartItem item={item} removeFromCart={this.removeFromCart} />
               ))}
             </table>
           </section>
