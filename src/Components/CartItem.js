@@ -3,7 +3,7 @@ import propTypes from 'prop-types';
 import Text from './Text';
 
 export default function CartItem(props) {
-  const { item, deleteFromCart } = props;
+  const { item, removeFromCart } = props;
   console.log('___cart item props: ', item)
   return (
     <tr className="products_container clearfix">
@@ -15,7 +15,7 @@ export default function CartItem(props) {
         <span>{(item.price * item.quantity).toFixed(2)}</span> <span> | qty: </span>
         <span>{item.quantity}</span>
         <br />
-        <button onClick={_ => deleteFromCart(item.id)}>remove item</button>
+        <button onClick={_ => removeFromCart(item.id)}>remove item</button>
       </td>
       <td />
     </tr>
@@ -31,5 +31,5 @@ CartItem.propTypes = {
         quantity: propTypes.number.isRequired,
         image: propTypes.string.isRequired
     }),
-    deleteFromCart: propTypes.func.isRequired
+    removeFromCart: propTypes.func.isRequired
 }
