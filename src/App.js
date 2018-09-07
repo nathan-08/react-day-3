@@ -134,11 +134,6 @@ class App extends Component {
   render() {
     return (
       <div>
-        <nav className="nav">
-          <span onClick={_ => this.navigate("products")}>products</span> |{" "}
-          <span onClick={_ => this.navigate("cart")}>cart</span>
-        </nav>
-        {this.state.display === "products" ? (
           <section className="products">
             <div className="products_header">
               <h1>PRODUCTS</h1>
@@ -246,8 +241,6 @@ class App extends Component {
               })}
             </tbody></table>
           </section>
-        ) : (
-          // else
           <section className="cart">
             <div className="cart_header">
               <h1>CART</h1>
@@ -286,7 +279,6 @@ class App extends Component {
               ))}
             </table>
           </section>
-        )}
       </div>
     );
   }
