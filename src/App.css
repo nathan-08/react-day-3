@@ -18,29 +18,12 @@ p, h1, h2, h4 {
 .new-product-form h4, .new-product-form td:last-child {
   text-align: center;
 }
-.nav {
-  background: var(--dark);
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin-bottom: 20px;
-  text-align: left;
-  color: var(--light);
-  padding: 0 1rem;
-  width: 100%;
-  border-left: 16px solid var(--dark);
-}
-.nav span {
-  cursor: pointer;
-}
 .products, .cart {
-  margin-top: 18px;
   position: fixed;
   top: 0;
   background: var(--light);
   color: var(--dark);
-  width:100%;
+  width:50%;
   height: 100%;
   overflow-y: auto;
   min-width: 300px;
