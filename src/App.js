@@ -24,7 +24,7 @@ class App extends Component {
       nameInput: "",
       descriptionInput: "",
       imageURLInput: "",
-      priceInput: null,
+      priceInput: "",
       categoryInput: ""
     };
     this.checkout = this.checkout.bind(this);
@@ -37,7 +37,6 @@ class App extends Component {
     axios.get("/products/key").then(apiKeyResponse => {
       const key = apiKeyResponse.data.apiKey;
       axios.get("/products/catalog?key=" + key).then(productsResponse => {
-        console.log("products from server: ___", productsResponse.data);
         productsResponse.data.forEach(item => (item.quantity = 0));
         // filter results onto arrays
         let camping = productsResponse.data.filter(item => item.category === "camping");
@@ -69,7 +68,6 @@ class App extends Component {
     price = parseFloat(price);
     const newProduct = { name, description, price, category, image };
     axios.post("/products/catalog?key=" + key, newProduct).then(productsResponse => {
-      console.log("products from server: ___", productsResponse.data);
       productsResponse.data.forEach(item => (item.quantity = 0));
       // filter results onto arrays
       let camping = productsResponse.data.filter(item => item.category === "camping");
@@ -135,8 +133,6 @@ class App extends Component {
     }
   }
   render() {
-    console.log("___", this.state);
-
     return (
       <div>
         <nav className="nav">
@@ -155,10 +151,10 @@ class App extends Component {
               </div>
             </div>
             <div className="new-product-form">
-              <table>
-                <th colSpan="2">
+              <table><tbody>
+                <tr><th colSpan="2">
                   <h4>Create New Product</h4>
-                </th>
+                </th></tr>
                 <tr>
                   <td>name: </td>
                   <td>
@@ -213,45 +209,45 @@ class App extends Component {
                   <td colSpan="2">
                     <Button handleClick={this.createNewProduct}text="submit"/>
                   </td>
-                </tr>
+                </tr></tbody>
               </table>
             </div>
-            <table className="products_body">
-              <thead>
+            <table className="products_body"><tbody>
+              <tr>
                 <th colSpan="2">
                   <h2>Camping</h2>
                 </th>
-              </thead>
+              </tr>
               {this.state.camping.map(item => {
-                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView}key={item.id} />;
               })}
 
-              <thead>
+              <tr>
                 <th colSpan="2">
                   <h2>Candy</h2>
                 </th>
-              </thead>
+              </tr>
               {this.state.candy.map(item => {
-                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} key={item.id} />;
               })}
 
-              <thead>
+              <tr>
                 <th colSpan="2">
                   <h2>Clothing</h2>
                 </th>
-              </thead>
+              </tr>
               {this.state.clothing.map(item => {
-                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} key={item.id}/>;
               })}
 
-              <thead>
+              <tr>
                 <th colSpan="2">
                   <h2>Food</h2>
                 </th>
-              </thead>
+              </tr>
               {this.state.food.map(item => {
-                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} />;
-              })}
+                  return <Product item={item} addToCart={this.addToCart} toggleView={this.state.toggleView} key={item.id}/>;
+              })}</tbody>
             </table>
           </section>
         ) : (
@@ -260,7 +256,7 @@ class App extends Component {
             <div className="cart_header">
               <h1>CART</h1>
               <div className="total">
-                <table>
+                <table><tbody>
                   <tr>
                     <td>
                       <label>address</label>
@@ -276,7 +272,7 @@ class App extends Component {
                     <td>
                       <input type="text" value={this.state.ccInput} onChange={this.handleCCInput} />
                     </td>
-                  </tr>
+                  </tr></tbody>
                 </table>
                 <h4>TOTAL</h4>
                 <p>
@@ -288,10 +284,10 @@ class App extends Component {
                 <Button handleClick={this.checkout} text="Checkout"/>
               </div>
             </div>
-            <table className="cart_body">
+            <table className="cart_body"><tbody>
               {this.state.cart.map(item => (
-                <CartItem item={item} removeFromCart={this.removeFromCart} />
-              ))}
+                <CartItem item={item} removeFromCart={this.removeFromCart} key={item.id}/>
+              ))}</tbody>
             </table>
           </section>
         )}
