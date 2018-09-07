@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 import Product from "./Components/Product";
 import CartItem from "./Components/CartItem";
-import Button from './Components/Button';
+import Button from "./Components/Button";
 
 class App extends Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class App extends Component {
       nameInput: "",
       descriptionInput: "",
       imageURLInput: "",
-      priceInput: null,
+      priceInput: "",
       categoryInput: ""
     };
     this.checkout = this.checkout.bind(this);
@@ -37,7 +37,6 @@ class App extends Component {
     axios.get("/products/key").then(apiKeyResponse => {
       const key = apiKeyResponse.data.apiKey;
       axios.get("/products/catalog?key=" + key).then(productsResponse => {
-        console.log("products from server: ___", productsResponse.data);
         productsResponse.data.forEach(item => (item.quantity = 0));
         // filter results onto arrays
         let camping = productsResponse.data.filter(item => item.category === "camping");
@@ -69,7 +68,6 @@ class App extends Component {
     price = parseFloat(price);
     const newProduct = { name, description, price, category, image };
     axios.post("/products/catalog?key=" + key, newProduct).then(productsResponse => {
-      console.log("products from server: ___", productsResponse.data);
       productsResponse.data.forEach(item => (item.quantity = 0));
       // filter results onto arrays
       let camping = productsResponse.data.filter(item => item.category === "camping");
@@ -119,8 +117,6 @@ class App extends Component {
     }
   }
   render() {
-    console.log("___", this.state);
-
     return (
       <div>
         <nav className="nav">
@@ -135,111 +131,129 @@ class App extends Component {
                 <label>search</label>
                 <input type="text" value={this.state.searchInput} onChange={this.handleSearch} />
                 <br />
-                <Button handleClick={this.toggleView} text="toggle view"/>
+                <Button handleClick={this.toggleView} text="toggle view" />
               </div>
             </div>
             <div className="new-product-form">
               <table>
-                <th colSpan="2">
-                  <h4>Create New Product</h4>
-                </th>
-                <tr>
-                  <td>name: </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={this.state.nameInput}
-                      onChange={event => this.setState({ nameInput: event.target.value })}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>description: </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={this.state.descriptionInput}
-                      onChange={event => this.setState({ descriptionInput: event.target.value })}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>image URL: </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={this.state.imageURLInput}
-                      onChange={event => this.setState({ imageURLInput: event.target.value })}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>category: </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={this.state.categoryInput}
-                      onChange={event => this.setState({ categoryInput: event.target.value })}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td>price: </td>
-                  <td>
-                    <input
-                      type="text"
-                      value={this.state.priceInput}
-                      onChange={event => this.setState({ priceInput: event.target.value })}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td colSpan="2">
-                    <Button handleClick={this.createNewProduct}text="submit"/>
-                  </td>
-                </tr>
+                <tbody>
+                  <tr>
+                    <th colSpan="2">
+                      <h4>Create New Product</h4>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>name: </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={this.state.nameInput}
+                        onChange={event => this.setState({ nameInput: event.target.value })}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>description: </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={this.state.descriptionInput}
+                        onChange={event => this.setState({ descriptionInput: event.target.value })}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>image URL: </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={this.state.imageURLInput}
+                        onChange={event => this.setState({ imageURLInput: event.target.value })}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>category: </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={this.state.categoryInput}
+                        onChange={event => this.setState({ categoryInput: event.target.value })}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>price: </td>
+                    <td>
+                      <input
+                        type="text"
+                        value={this.state.priceInput}
+                        onChange={event => this.setState({ priceInput: event.target.value })}
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colSpan="2">
+                      <Button handleClick={this.createNewProduct} text="submit" />
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
             <table className="products_body">
-              <thead>
-                <th colSpan="2">
-                  <h2>Camping</h2>
-                </th>
-              </thead>
-              {this.state.camping.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
-              })}
+              <tbody>
+                <tr>
+                  <th colSpan="2">
+                    <h2>Camping</h2>
+                  </th>
+                </tr>
+                {this.state.camping.map(item => {
+                  if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                    return (
+                      <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id} />
+                    );
+                  return null;
+                })}
 
-              <thead>
-                <th colSpan="2">
-                  <h2>Candy</h2>
-                </th>
-              </thead>
-              {this.state.candy.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
-              })}
+                <tr>
+                  <th colSpan="2">
+                    <h2>Candy</h2>
+                  </th>
+                </tr>
+                {this.state.candy.map(item => {
+                  if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                    return (
+                      <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id} />
+                    );
+                  return null;
+                })}
 
-              <thead>
-                <th colSpan="2">
-                  <h2>Clothing</h2>
-                </th>
-              </thead>
-              {this.state.clothing.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
-              })}
+                <tr>
+                  <th colSpan="2">
+                    <h2>Clothing</h2>
+                  </th>
+                </tr>
+                {this.state.clothing.map(item => {
+                  if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                    return (
+                      <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id} />
+                    );
+                  return null;
+                })}
 
-              <thead>
-                <th colSpan="2">
-                  <h2>Food</h2>
-                </th>
-              </thead>
-              {this.state.food.map(item => {
-                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} />;
-              })}
+                <tr>
+                  <th colSpan="2">
+                    <h2>Food</h2>
+                  </th>
+                </tr>
+                {this.state.food.map(item => {
+                  if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                    return (
+                      <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id} />
+                    );
+                  return null;
+                })}
+              </tbody>
             </table>
           </section>
         ) : (
@@ -248,7 +262,7 @@ class App extends Component {
             <div className="cart_header">
               <h1>CART</h1>
               <div className="total">
-                <table>
+                <table><tbody>
                   <tr>
                     <td>
                       <label>address</label>
@@ -264,7 +278,7 @@ class App extends Component {
                     <td>
                       <input type="text" value={this.state.ccInput} onChange={this.handleCCInput} />
                     </td>
-                  </tr>
+                  </tr></tbody>
                 </table>
                 <h4>TOTAL</h4>
                 <p>
@@ -273,14 +287,14 @@ class App extends Component {
                     .reduce((accumulator, current) => (accumulator += current.price * current.quantity), 0)
                     .toFixed(2)}
                 </p>
-                <Button handleClick={this.checkout} text="Checkout"/>
+                <Button handleClick={this.checkout} text="Checkout" />
               </div>
             </div>
-            <table className="cart_body">
+            <table className="cart_body"><tbody>
               {this.state.cart.map(item => (
-                <CartItem item={item} removeFromCart={this.removeFromCart} />
+                <CartItem item={item} removeFromCart={this.removeFromCart} key={item.id} />
               ))}
-            </table>
+            </tbody></table>
           </section>
         )}
       </div>
