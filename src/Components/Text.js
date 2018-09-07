@@ -7,7 +7,10 @@ function Text(props) {
 }
 
 Text.propTypes = {
-    text: propTypes.string.isRequired,
+    text: propTypes.oneOfType([
+      propTypes.string, 
+      propTypes.number
+    ]),
     isHeader: propTypes.bool.isRequired
 }
 export default Text;
