@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import axios from 'axios';
+import axios from "axios";
 import "./App.css";
-import Product from './Components/Product';
-import CartItem from './Components/CartItem';
+import Product from "./Components/Product";
+import CartItem from "./Components/CartItem";
+import AddProduct from "./Components/AddProduct";
 
 class App extends Component {
   constructor(props) {
@@ -12,63 +13,78 @@ class App extends Component {
       ccInput: "",
       display: "products",
       cart: [],
-      apiKey: '',
-      searchInput: '',
+      apiKey: "",
+      searchInput: "",
       cardView: true,
       products: [],
-      camping: [], candy: [], clothing: [], food: [],
-      nameInput: '', descriptionInput: '', imageURLInput: '', priceInput: null, categoryInput: ''
+      camping: [],
+      candy: [],
+      clothing: [],
+      food: [],
+      nameInput: "",
+      descriptionInput: "",
+      imageURLInput: "",
+      priceInput: "",
+      categoryInput: ""
     };
     this.checkout = this.checkout.bind(this);
     this.addToCart = this.addToCart.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() {
     // get api key
     // then get all products
-    axios.get('/products/key').then(apiKeyResponse=>{
+    axios.get("/products/key").then(apiKeyResponse => {
       const key = apiKeyResponse.data.apiKey;
-      axios.get('/products/catalog?key=' + key)
-           .then(productsResponse => {
-             console.log('products from server: ___', productsResponse.data)
-             productsResponse.data.forEach(item=>item.quantity = 0)
-             // filter results onto arrays
-             let camping  = productsResponse.data.filter(item=>item.category==="camping")
-             let candy    = productsResponse.data.filter(item=>item.category==="candy")
-             let clothing = productsResponse.data.filter(item=>item.category==="clothing")
-             let food     = productsResponse.data.filter(item=>item.category==="food")
-             this.setState({
-               products: productsResponse.data,
-               apiKey: key,
-               camping, candy, clothing, food
-              })
-           })
-    })
+      axios.get("/products/catalog?key=" + key).then(productsResponse => {
+        productsResponse.data.forEach(item => (item.quantity = 0));
+        // filter results onto arrays
+        let camping = productsResponse.data.filter(item => item.category === "camping");
+        let candy = productsResponse.data.filter(item => item.category === "candy");
+        let clothing = productsResponse.data.filter(item => item.category === "clothing");
+        let food = productsResponse.data.filter(item => item.category === "food");
+        this.setState({
+          products: productsResponse.data,
+          apiKey: key,
+          camping,
+          candy,
+          clothing,
+          food
+        });
+      });
+    });
   }
   createNewProduct = () => {
     // post new product to server
     // name, desc, price, imageURL
-    let { nameInput: name, descriptionInput: description, priceInput: price, imageURLInput: image, categoryInput: category, apiKey: key } = this.state
-    price = parseFloat(price)
-    const newProduct = { name, description, price, category, image }
-    axios.post('/products/catalog?key=' + key, newProduct)
-         .then(productsResponse => {
-          console.log('products from server: ___', productsResponse.data)
-          productsResponse.data.forEach(item=>item.quantity = 0)
-          // filter results onto arrays
-          let camping  = productsResponse.data.filter(item=>item.category==="camping")
-          let candy    = productsResponse.data.filter(item=>item.category==="candy")
-          let clothing = productsResponse.data.filter(item=>item.category==="clothing")
-          let food     = productsResponse.data.filter(item=>item.category==="food")
-          this.setState({
-            products: productsResponse.data,
-            apiKey: key,
-            camping, candy, clothing, food
-           })
-        })
-    
-  }
-  toggleDisplay = () => this.setState({ display: this.state.display==="products"?"cart":"products"})
+    let {
+      nameInput: name,
+      descriptionInput: description,
+      priceInput: price,
+      imageURLInput: image,
+      categoryInput: category,
+      apiKey: key
+    } = this.state;
+    price = parseFloat(price);
+    const newProduct = { name, description, price, category, image };
+    axios.post("/products/catalog?key=" + key, newProduct).then(productsResponse => {
+      productsResponse.data.forEach(item => (item.quantity = 0));
+      // filter results onto arrays
+      let camping = productsResponse.data.filter(item => item.category === "camping");
+      let candy = productsResponse.data.filter(item => item.category === "candy");
+      let clothing = productsResponse.data.filter(item => item.category === "clothing");
+      let food = productsResponse.data.filter(item => item.category === "food");
+      this.setState({
+        products: productsResponse.data,
+        apiKey: key,
+        camping,
+        candy,
+        clothing,
+        food
+      });
+    });
+  };
+  toggleDisplay = () => this.setState({ display: this.state.display === "products" ? "cart" : "products" });
   toggleView = () => this.setState({ cardView: !this.state.cardView });
   handleAddressInput = event => this.setState({ addressInput: event.target.value });
   handleCCInput = event => this.setState({ ccInput: event.target.value });
@@ -84,8 +100,8 @@ class App extends Component {
     }
     this.setState({ cart: newCart });
   };
-  navigate = value => this.setState({ display: value })
-  handleSearch = event => this.setState({ searchInput: event.target.value })
+  navigate = value => this.setState({ display: value });
+  handleSearch = event => this.setState({ searchInput: event.target.value });
   addToCart(item) {
     const { cart } = this.state;
     let newCart = cart.map(cartItem => Object.assign({}, cartItem));
@@ -116,143 +132,161 @@ class App extends Component {
     }
   }
   render() {
-    console.log('___',this.state)
-
     return (
       <div>
-        <nav className="nav"><span onClick={_=>this.navigate('products')}>products</span> | <span onClick={_=>this.navigate('cart')}>cart</span></nav>
-       { this.state.display==="products"
-       ? <section className="products">
-          <div className="products_header">
-            <h1>PRODUCTS</h1>
-            <div className="button_container">
-            <label>search</label>
-            <input type="text" value={this.state.searchInput} onChange={this.handleSearch}/><br/>
-            <button onClick={this.toggleView}>toggle view</button>
+        <nav className="nav">
+          <span onClick={_ => this.navigate("products")}>products</span> |{" "}
+          <span onClick={_ => this.navigate("cart")}>cart</span>
+        </nav>
+        {this.state.display === "products" ? (
+          <section className="products">
+            <div className="products_header">
+              <h1>PRODUCTS</h1>
+              <div className="button_container">
+                <label>search</label>
+                <input type="text" value={this.state.searchInput} onChange={this.handleSearch} />
+                <br />
+                <button onClick={this.toggleView}>toggle view</button>
+              </div>
             </div>
-          </div>
-          <div className="new-product-form">
-            <table> 
-              <th colspan="2"><h4>Create New Product</h4></th>
-              <tr>
-                <td>name: </td>
-                <td><input type="text" value={this.state.nameInput}
-                           onChange={event=>this.setState({nameInput:event.target.value})}></input></td>
-              </tr>
-              <tr>
-                <td>description: </td>
-                <td><input type="text" value={this.state.descriptionInput}
-                           onChange={event=>this.setState({descriptionInput:event.target.value})}></input></td>
-              </tr>
-              <tr>
-                <td>image URL: </td>
-                <td><input type="text" value={this.state.imageURLInput}
-                           onChange={event=>this.setState({imageURLInput:event.target.value})}></input></td>
-              </tr>
-              <tr>
-                <td>category: </td>
-                <td><input type="text" value={this.state.categoryInput}
-                           onChange={event=>this.setState({categoryInput:event.target.value})}></input></td>
-              </tr>
-              <tr>
-                <td>price: </td>
-                <td><input type="text" value={this.state.priceInput}
-                           onChange={event=>this.setState({priceInput:event.target.value})}></input></td>
-              </tr>
-              <tr><td colspan="2"><button onClick={this.createNewProduct}>submit</button></td></tr>
-
-            
-            </table>
-          </div>
-          <table className="products_body">
-            <thead>
-              <th colspan="2">
-                <h2>Camping</h2>
-              </th>
-            </thead>
-            {this.state.camping.map(item =>{ 
-            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-            return <Product 
-              item={item} 
-              addToCart={this.addToCart} 
-              cardView={this.state.cardView}
-            />})}
-
-
-            <thead><th colspan="2">
-            <h2>Candy</h2></th>
-            </thead>
-            {this.state.candy.map(item =>{ 
-            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-            return <Product
-              item={item}
-              addToCart={this.addToCart}
-              cardView={this.state.cardView}
-            />})}
-
-              <thead><th colspan="2">
-            <h2>Clothing</h2></th>
-            </thead>
-            {this.state.clothing.map(item =>{ 
-            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-            return <Product
-              item={item}
-              addToCart={this.addToCart}
-              cardView={this.state.cardView}
-            />})}
-
-            <thead><th colspan="2">
-            <h2>Food</h2></th>
-            </thead>
-            {this.state.food.map(item =>{ 
-            if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
-            return <Product
-              item={item}
-              addToCart={this.addToCart}
-              cardView={this.state.cardView}
-            />})}
-
-          </table>
-        </section>
-        // else
-        : <section className="cart">
-          <div className="cart_header">
-            <h1>CART</h1>
-            <div className="total">
-              <table>
+            <div className="new-product-form">
+              <table><tbody>
+                <tr><th colSpan="2">
+                  <h4>Create New Product</h4>
+                </th></tr>
                 <tr>
+                  <td>name: </td>
                   <td>
-                    <label>address</label>
-                  </td>
-                  <td>
-                    <input type="text" value={this.state.addressInput} onChange={this.handleAddressInput} />
+                    <input
+                      type="text"
+                      value={this.state.nameInput}
+                      onChange={event => this.setState({ nameInput: event.target.value })}
+                    />
                   </td>
                 </tr>
                 <tr>
+                  <td>description: </td>
                   <td>
-                    <label>credit card number</label>
-                  </td>
-                  <td>
-                    <input type="text" value={this.state.ccInput} onChange={this.handleCCInput} />
+                    <input
+                      type="text"
+                      value={this.state.descriptionInput}
+                      onChange={event => this.setState({ descriptionInput: event.target.value })}
+                    />
                   </td>
                 </tr>
+                <tr>
+                  <td>image URL: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.imageURLInput}
+                      onChange={event => this.setState({ imageURLInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>category: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.categoryInput}
+                      onChange={event => this.setState({ categoryInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td>price: </td>
+                  <td>
+                    <input
+                      type="text"
+                      value={this.state.priceInput}
+                      onChange={event => this.setState({ priceInput: event.target.value })}
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="2">
+                    <button onClick={this.createNewProduct}>submit</button>
+                  </td>
+                </tr></tbody>
               </table>
-              <h4>TOTAL</h4>
-              <p>
-                $
-                {this.state.cart
-                  .reduce((accumulator, current) => (accumulator += current.price * current.quantity), 0)
-                  .toFixed(2)}
-              </p>
-              <button onClick={this.checkout}>Checkout</button>
             </div>
-          </div>
-          <table className="cart_body">
-            {this.state.cart.map(item => <CartItem 
-              item={item} 
-              removeFromCart={this.removeFromCart}/>)}
-          </table>
-        </section> }
+            <table className="products_body"><tbody>
+              <tr><th colSpan="2">
+                <h2>Camping</h2>
+              </th></tr>
+              {this.state.camping.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id}/>;
+              })}
+
+              <tr><th colSpan="2">
+                <h2>Candy</h2>
+              </th></tr>
+              {this.state.candy.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id}/>;
+              })}
+
+              <tr><th colSpan="2">
+                <h2>Clothing</h2>
+              </th></tr>
+              {this.state.clothing.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id}/>;
+              })}
+
+              <tr><th colSpan="2">
+                <h2>Food</h2>
+              </th></tr>
+
+              {this.state.food.map(item => {
+                if (item.name.toLowerCase().includes(this.state.searchInput.toLowerCase()))
+                  return <Product item={item} addToCart={this.addToCart} cardView={this.state.cardView} key={item.id}/>;
+              })}
+            </tbody></table>
+          </section>
+        ) : (
+          // else
+          <section className="cart">
+            <div className="cart_header">
+              <h1>CART</h1>
+              <div className="total">
+                <table>
+                  <tr>
+                    <td>
+                      <label>address</label>
+                    </td>
+                    <td>
+                      <input type="text" value={this.state.addressInput} onChange={this.handleAddressInput} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <label>credit card number</label>
+                    </td>
+                    <td>
+                      <input type="text" value={this.state.ccInput} onChange={this.handleCCInput} />
+                    </td>
+                  </tr>
+                </table>
+                <h4>TOTAL</h4>
+                <p>
+                  $
+                  {this.state.cart
+                    .reduce((accumulator, current) => (accumulator += current.price * current.quantity), 0)
+                    .toFixed(2)}
+                </p>
+                <button onClick={this.checkout}>Checkout</button>
+              </div>
+            </div>
+            <table className="cart_body">
+              {this.state.cart.map(item => (
+                <CartItem item={item} removeFromCart={this.removeFromCart} key={item.id}/>
+              ))}
+            </table>
+          </section>
+        )}
       </div>
     );
   }
