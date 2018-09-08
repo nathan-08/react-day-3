@@ -8,6 +8,8 @@ In this project we will create a e-commerce React application from an start to f
 
 Today we will be focusing on making HTTP requests using the Axios library.
 
+<img src="./src/img/screenshot.png"/>
+
 ## part 1
 
 ### Summary
