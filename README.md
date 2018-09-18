@@ -14,7 +14,7 @@ Today we will be focusing on making HTTP requests using the Axios library. We wi
 
 # Live Example
 
-<img src="./src/img/screenshot.png" alt="screenshot"/>
+<img src="./readme-assets/screenshot.png" alt="screenshot"/>
 
 ## Setup 
 
@@ -33,62 +33,38 @@ In this part we will use `axios` in the `componentDidMount` method of `App`, to 
 - Run `npm install axios` in your project root directory, to install the `axios` package.
 - Import `axios` in `App.js`, at the top of the file, like so: `import axios from "axios";`
 - Create a `componentDidMount` method on the `App` component. 
-- In the `componentDidMount`, we will need to make an axios request to get an API key. Refer to the API docs for how to format your axios request. Products API docs: `http://104.248.178.153/products/`
-- Once you have the key, chain a `.then` onto the axios request, and set the API key on state using `this.setState()`
+- In the `componentDidMount`, we will make an axios request to get a list of products from the server. Refer to the API docs for how to format your axios request. Products API docs: `http://104.248.178.153/products/`
+- In order to use the API, an `API key` is required. Use the `Postman` program to request an `API key` from the products server.
+    - This will be a `GET` request. The API docs will tell you how to format the request.
+    - Once you have a key, store it on state in your app
 
     <details><summary> Detailed Instructions </summary>
 
     Let's begin by opening `src/App.js` and creating a `componentDidMount` method after the `constructor` but before the `render` method. 
 
     ```js
+    constructor(){
+        props()
+        this.state = {
+            apiKey: '<<API key that you got using postman>>'
+        }
+    }
     componentDidMount() {
-        // axios request goes here
+        // axios request will go here
     }
     ```
-
-    Now create an axios `GET` request, in the `componentDidMount`, referring to the API docs for how to format this request. Chain a `.then` method onto the requst, and store the resulting `API key` on state.
-
-    ```js
-    componentDidMount() {
-        axios.get('/{{{BASE_URL_FOR_PRODUCTS_API}}}/api/key')
-             .then(res=>{
-                 this.setState({ apiKey: res.data.apiKey })
-             })
-    }
-    ```
-    </details>
-
-### Solution
-
-<details>
-
-<summary> <code> src/App.js </code> </summary>
-<br />
-
-```js
-componentDidMount() {
-    axios.get('/{{{BASE_URL_FOR_PRODUCTS_API}}}/api/key')
-            .then(res=>{
-                this.setState({ apiKey: res.data.apiKey })
-            })
-}
-```
-
-</details>
 
 ## Step 2
 
 - Now we need to get the list of products from the API, using the API key that we have just acquired. 
-    - This can also take place in `componentDidMount`, in the `.then` of the first `GET` request.
 
     <details> <summary> example code </summary> 
 
     ```js
     componentDidMount() {
-        axios.get('{{{BASEURL}}}/api/key')
-             .then( apiKeyResponse => {
-                 axios.get('{{{BASEURL}}}/api/products?key='+apiKeyResponse.data.apiKey)
-                      .then( productsResponse => { // ...
+        axios.get('http://104.248.178.153/products/catalog?key='+this.state.apiKey)
+             .then( productsResponse => { // ...do something with the response
+             })
     ```
 
     </details>
@@ -99,7 +75,11 @@ componentDidMount() {
     <details> <summary> example code </summary> 
 
     ```js
-    productsResponse.data.forEach( item => item.quantity = 0 )
+    axios.get('http://104.248.178.153/products/catalog?key='+this.state.apiKey)
+             .then( productsResponse => { 
+                 productsResponse.data.forEach( item => item.quantity = 0 )
+                 // ...
+             })
     ```
 
     </details> 
@@ -134,26 +114,24 @@ Modify componentDidMount, to also hit the products endpoint, to get all products
 
 ```js
 componentDidMount() {
-    axios.get('{{{BASEURL}}}/api/key')
-            .then( apiKeyResponse => {
-                axios.get('{{{BASEURL}}}/api/products?key='+apiKeyResponse.data.apiKey)
-                    .then( productsResponse => {
-                        // we also need to add a quantity to the each product item
-                        productsResponse.data.forEach( item => item.quantity = 0 )
-                        // here we need to sort the resulting product data by category
-                        let camping = productsResponse.data.filter( item => item.category === "camping" )
-                        let clothing = productsResponse.data.filter( item => item.category === "clothing" )
-                        let candy = productsResponse.data.filter( item => item.category === "candy" )
-                        let food = productsResponse.data.filter( item => item.category === "food" )
-                        // now that we have this data sorted into categories, we can set these on state
-                        this.setState({
-                            camping: camping,
-                            clothing: clothing,
-                            candy: candy,
-                            food: food
-                        })
-                    })
+    axios.get('http://104.248.178.153/products/catalog?key='+apiKeyResponse.data.apiKey)
+        .then( productsResponse => {
+            // we also need to add a quantity to the each product item
+            productsResponse.data.forEach( item => item.quantity = 0 )
+            // here we need to sort the resulting product data by category
+            let camping = productsResponse.data.filter( item => item.category === "camping" )
+            let clothing = productsResponse.data.filter( item => item.category === "clothing" )
+            let candy = productsResponse.data.filter( item => item.category === "candy" )
+            let food = productsResponse.data.filter( item => item.category === "food" )
+            // now that we have this data sorted into categories, we can set these on state
+            this.setState({
+                camping: camping,
+                clothing: clothing,
+                candy: candy,
+                food: food
             })
+        })
+    })
 }
 ```
 
@@ -293,7 +271,7 @@ export default class AddProduct extends Component {
 
 ```js
 submit ( product ) {
-    axios.post('{{{BASE_URL}}}/api/products?key='+this.state.apiKey, product)
+    axios.post('http://104.248.178.153/products/catalog?key='+this.state.apiKey, product)
          .then( response => {
              // filter response data by category
             let camping = productsResponse.data.filter( item => item.category === "camping" )
@@ -372,7 +350,7 @@ In this part we will be changing up the way we handle the cart. All of the cart 
 
 ```js
 addToCart( item ) {
-    axios.post(`{{{BASEURL}}}/api/products/${item}?key`)
+    axios.post(`http://104.248.178.153/products/catalog/${item}?key=${this.state.apiKey}`)
          .then(cartResponse => this.setState({ cart: cartResponse.data }))
 }
 ```
@@ -392,7 +370,7 @@ addToCart( item ) {
 
 ```js
 removeFromCart( itemId ) {
-    axios.delete(`{{{BASEURL}}}/api/products/${itemId}?key={this.state.apiKey}`)
+    axios.delete(`http://104.248.178.153/products/catalog/${itemId}?key=${this.state.apiKey}`)
          .then( cartResponse => this.setState({ cart: cartResponse.data }))
 }
 ```
@@ -430,8 +408,8 @@ function Button (props) {
 }
 
 Button.propTypes = {
-    handleClick: propTypes.func.isRequired,
-    text: propTypes.string.isRequired
+    handleClick: PropTypes.func.isRequired,
+    text: PropTypes.string.isRequired
 }
 ```
 
@@ -498,7 +476,7 @@ In this part we will be creating a search function to query the API with a name 
 
 ```js
 handleSearch() {
-    axios.get(`{{{BASEURL}}}/products/catalog?key=${this.state.apiKey}&name=${this.state.searchInput}`)
+    axios.get(`http://104.248.178.153/products/catalog?key=${this.state.apiKey}&name=${this.state.searchInput}`)
          .then(productsResponse => {
             // filter results onto arrays
             let camping = productsResponse.data.filter(item => item.category === "camping");
@@ -521,16 +499,18 @@ handleSearch() {
 - Now we are going to use another API to process the user's payment when they checkout. 
     - Payment API docs: http://104.248.178.153/payment/
 - In order to use the Payment API, we will need to request a seperate api key.
-    - Do this in the `componentDidMount`, by creating another `GET` request to get the payment API key. 
+    - Do this using `Postman`, and store the value on App's state manually
 
     <details><summary> Detailed  Instructions </summary> 
 
     In App.js, componendDidMount
     ```js
-    axios.get('{{{PAYMENT API BASEURL}}}/payment/key)
-         .then( apiKeyResponse => {
-             this.setState({ paymentApiKey: apiKeyResponse.data.apiKey })
-         })
+    constructor(){
+        super()
+        this.state = {
+            paymentAPIKey = '<<key you get from making get request with postman for payment api key>>'
+        }
+    }
     ```
     </details> 
 
@@ -551,8 +531,8 @@ checkout() {
     } else if (this.state.cart.length===0) {
         alert("Cart is empty.");
     } else {
-        axios.post('{{{PAYMENT API BASEURL}}}/payment/transactions?key='+this.state.paymentApiKey, this.state.cart)
-        axios.delete("{{{PRODUCTS API BASEURL}}}/products/cart/checkout?key="+this.state.apiKey).then(checkoutResponse => {
+        axios.post("http://104.248.178.153/payment/transactions?key="+this.state.paymentApiKey, this.state.cart)
+        axios.delete("http://104.248.178.153/products/cart/checkout?key="+this.state.apiKey).then(checkoutResponse => {
             this.setState({
                 cart: checkoutResponse.data,
                 addressInput: "",
